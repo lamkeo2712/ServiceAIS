@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.10.35122.118
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "myAISapi", "myAISapi.csproj", "{1238F3B1-F7E5-40BF-825F-17D7420047AA}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{1238F3B1-F7E5-40BF-825F-17D7420047AA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1238F3B1-F7E5-40BF-825F-17D7420047AA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1238F3B1-F7E5-40BF-825F-17D7420047AA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1238F3B1-F7E5-40BF-825F-17D7420047AA}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {3AEA826A-3CF8-47C4-9B33-26825B2072BE}
+	EndGlobalSection
+EndGlobal
