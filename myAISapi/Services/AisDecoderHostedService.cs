@@ -105,14 +105,20 @@ namespace myAISapi.Services
 												var tau = dataHelper.Ship((DecodedAISMessage)decodedData);
 												var hanhtrinh = dataHelper.Route((DecodedAISMessage)decodedData);
 												//_logger.LogInformation(JsonSerializer.Serialize(tau));
-												if (tau is not string)
+												if (tau is not string )
 												{
-													_shipStore.AddShip((DM_Tau)tau);
-													_shipHsStore.AddShip((DM_Tau)tau);
+													if (IsTauValid((DM_Tau)tau))
+													{
+														_shipStore.AddShip((DM_Tau)tau);
+														_shipHsStore.AddShip((DM_Tau)tau);
+													}
 												}
-												if (hanhtrinh is not string) { 
-													_routeStore.AddRoute((DM_HanhTrinh)hanhtrinh);
-													//_logger.LogInformation(JsonSerializer.Serialize((DM_HanhTrinh)hanhtrinh));
+												if (hanhtrinh is not string) {
+													if (IsHanhTrinhValid((DM_HanhTrinh)hanhtrinh))
+													{
+														_routeStore.AddRoute((DM_HanhTrinh)hanhtrinh);
+														//_logger.LogInformation(JsonSerializer.Serialize((DM_HanhTrinh)hanhtrinh));
+													}
 												}
 												//else
 												//{
@@ -157,7 +163,44 @@ namespace myAISapi.Services
 			_logger.LogInformation("AIS Decoder Hosted Service is stopping.");
 		}
 
+		private bool IsTauValid(DM_Tau tau)
+		{
+			if(tau.VesselName == null && tau.IMONumber == 0 &&
+				tau.CallSign == null && tau.ShipType == 0 &&
+				tau.AISVersion == 0 && tau.TypeOfEPFD == 0 &&
+				tau.DimensionToBow == 0 && tau.DimensionToStern == 0 &&
+				tau.DimensionToPort == 0 && tau.DimensionToStar == 0 &&
+				tau.ShipLength == 0 && tau.ShipWidth == 0 &&
+				tau.Draught == 0 && tau.Destination == null &&
+				tau.VirtualAidFlag == false && tau.OffPositionIndicator == false)
+			{
+				return false;
+			}
+			else
+			{
+				return true;
+			}
+		}
 
+		private bool IsHanhTrinhValid(DM_HanhTrinh ht)
+		{
+			if(ht.NavigationStatus == 0 && ht.RateOfTurn == 0 &&
+				ht.SpeedOverGround == 0 && ht.PositionAccuracy == false &&
+				ht.Longitude == 0 && ht.Latitude == 0 &&
+				ht.CourseOverGround == 0 && ht.TrueHeading == 0 &&
+				ht.DateTimeUTC == null && ht.ManeuverIndicator == 0 &&
+				ht.RAIMFlags == false && ht.PositionFixType == 0 &&
+				ht.StationType == 0 && ht.ReportInterval == 0 &&
+				ht.DisplayFlag == false && ht.DSCFlag == false &&
+				ht.ETADateTime == null)
+			{
+				return false;
+			}
+			else
+			{
+				return true;
+			}
+		}
 
 
 	}

@@ -21,7 +21,7 @@ namespace myAISapi.Decoder
 					PositionAccuracy = (bool)parseData(SubVipPro(payloadBit, 60, 1), "b"),
 					Longitude = (double)parseData(SubVipPro(payloadBit, 61, 28), "I", 4)/60,
 					Latitude = (double)parseData(SubVipPro(payloadBit, 89, 27), "I", 4)/60,
-					CourseOverGround = (double)parseData(SubVipPro(payloadBit, 116, 112), "U", 1),
+					CourseOverGround = (double)parseData(SubVipPro(payloadBit, 116, 12), "U", 1),
 					TrueHeading = (int)parseData(SubVipPro(payloadBit, 128, 9), "u"),
 					SecondUTC = (int)parseData(SubVipPro(payloadBit, 137, 6), "u") is var second && (int)second >= 0 && (int)second <= 59 ? second : -1,
 					ManeuverIndicator = (int)parseData(SubVipPro(payloadBit, 143, 2), "e"),

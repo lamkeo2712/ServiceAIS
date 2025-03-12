@@ -1,4 +1,5 @@
-﻿using myAISapi.Data;
+﻿using Microsoft.AspNetCore.Routing;
+using myAISapi.Data;
 using myAISapi.Decoder;
 using myAISapi.Models;
 using System.Numerics;
@@ -60,27 +61,12 @@ namespace myAISapi.Services
 						using (var scope = _scopeFactory.CreateScope())
 						{
 							var dbContext = scope.ServiceProvider.GetRequiredService<AppDBContext>();
-							var ThamSoJSON = new
-							{
-								MMSI = ship.MMSI,
-								VesselName = ship.VesselName,
-								IMONumber = ship.IMONumber,
-								CallSign = ship.CallSign,
-								ShipType= ship.ShipType,
-								AISVersion = ship.AISVersion,
-								TypeOfEPFD = ship.TypeOfEPFD,
-								ShipLength = ship.ShipLength,
-								ShipWidth = ship.ShipWidth,
-								Draught = ship.Draught,
-								Destination = ship.Destination,
-								VirtualAidFlag = ship.VirtualAidFlag,
-								OffPositionIndicator = ship.OffPositionIndicator,
-							};
+							var ThamSoJSON = JsonSerializer.Serialize(ship);
 
 							_logger.LogInformation($"processing ship: {ship}");
 							var exec = await dbContext.ExecuteProcedureAsync(
 								"Proc_DM_Tau_Update",
-								JsonSerializer.Serialize(ThamSoJSON),
+								ThamSoJSON,
 								"Admin"
 							);
 
