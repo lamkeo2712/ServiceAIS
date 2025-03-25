@@ -158,7 +158,7 @@ namespace myAISapi.Decoder
 					TrueHeading = (int)parseData(SubVipPro(payloadBit,124, 9), "u"),
 					SecondUTC = (int)parseData(SubVipPro(payloadBit,133, 6), "u") is var second && (int)second >= 0 && (int)second <= 59 ? second : -1,
 					RegionalReserved2 = (int)parseData(SubVipPro(payloadBit,139, 4), "u"),
-					Name = (string)parseData(SubVipPro(payloadBit,143, 120), "t"),
+					VesselName = (string)parseData(SubVipPro(payloadBit,143, 120), "t"),
 					ShipType = (int)parseData(SubVipPro(payloadBit,263, 8), "e"),
 					DimensionToBow = (int)parseData(SubVipPro(payloadBit,271, 9), "u"),
 					DimensionToStern = (int)parseData(SubVipPro(payloadBit,280, 9), "u"),
@@ -188,7 +188,7 @@ namespace myAISapi.Decoder
 					RepeatIndicator = (int)parseData(SubVipPro(payloadBit,6, 2), "u"),
 					MMSI = (int)parseData(SubVipPro(payloadBit,8, 30), "u"),
 					AidType = (int)parseData(SubVipPro(payloadBit, 38, 5), "e"),
-					Name = (string)parseData(SubVipPro(payloadBit,43, 120), "t"),
+					VesselName = (string)parseData(SubVipPro(payloadBit,43, 120), "t"),
 					PositionAccuracy = (bool)parseData(SubVipPro(payloadBit,163, 1), "b"),
 
 					Longitude = (double)parseData(SubVipPro(payloadBit, 164, 28), "I", 4)/60,

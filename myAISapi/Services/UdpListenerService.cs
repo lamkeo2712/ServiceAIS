@@ -38,11 +38,11 @@ namespace myAISapi.Services
 
 			_logger.LogInformation($"✅ Check:{stoppingToken.IsCancellationRequested}");
 			int i = 0;
-			//while (!stoppingToken.IsCancellationRequested)
-				while (i < 3)
-				{
-				try
+			while (!stoppingToken.IsCancellationRequested)
+			//while (i < 3)
 			{
+				try
+				{
 					var result = await _udpClient.ReceiveAsync();
 					string message = Encoding.UTF8.GetString(result.Buffer);
 					_messageStore.AddMessage(message);

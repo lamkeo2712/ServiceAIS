@@ -11,10 +11,17 @@ namespace myAISapi.Data
 			{
 				double SLength = message.DimensionToBow + message.DimensionToStern;
 				double SWidth = message.DimensionToPort + message.DimensionToStar;
+				string? name = message.VesselName;
+				if (message.NameExtension != null) {
+					name = name + message.NameExtension; 
+				}
+				name = name?.Replace("@","");
+				string? callsign = message.CallSign?.Replace("@", "");
+
 				DM_Tau tau = new DM_Tau
 				{
 					MMSI = message.MMSI,
-					VesselName = message.VesselName,
+					VesselName = name,
 					IMONumber = message.IMONumber,
 					CallSign = message.CallSign,
 					ShipType = message.ShipType,

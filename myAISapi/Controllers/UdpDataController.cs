@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using myAISapi.Models;
 using myAISapi.Services;
@@ -8,6 +9,7 @@ namespace myAISapi.Controllers
 {
 	[ApiController]
 	[Route("api/[controller]")]
+	[Authorize]
 	public class UdpDataController : ControllerBase
 	{
 		private readonly ILogger<AisDecoderHostedService> _logger;
@@ -35,21 +37,20 @@ namespace myAISapi.Controllers
 		}
 
 		[HttpGet("messages")]
+		[Authorize(Policy = "AdminOnly")]
 		public IActionResult GetMessages()
 		{
 			return Ok(_messageStore.GetAllMessages());
 		}
-		[HttpGet("hs")]
-		public IActionResult GetHS()
-		{
-			return Ok(_shipHsStore.GetAllShip());
-		}
+
 		[HttpGet("tau")]
+		[Authorize(Policy = "AdminOnly")]
 		public IActionResult GetShip()
 		{
 			return Ok(_shipStore.GetAllShip());
 		}
 		[HttpGet("hanhtrinh")]
+		[Authorize(Policy = "GuestOnly")]
 		public IActionResult GetRoute()
 		{
 			return Ok(_routeStore.GetAllRoute());

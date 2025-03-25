@@ -174,3 +174,5 @@ D:\Study\Git\ServiceAIS\ServiceAIS\myAISapi\bin\Debug\net8.0\tr\Microsoft.CodeAn
 D:\Study\Git\ServiceAIS\ServiceAIS\myAISapi\bin\Debug\net8.0\zh-Hans\Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.resources.dll
 D:\Study\Git\ServiceAIS\ServiceAIS\myAISapi\bin\Debug\net8.0\zh-Hant\Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.resources.dll
 D:\Study\Git\ServiceAIS\ServiceAIS\myAISapi\bin\Debug\net8.0\Newtonsoft.Json.dll
+D:\Study\Git\ServiceAIS\ServiceAIS\myAISapi\bin\Debug\net8.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
+D:\Study\Git\ServiceAIS\ServiceAIS\myAISapi\bin\Debug\net8.0\BCrypt.Net.dll

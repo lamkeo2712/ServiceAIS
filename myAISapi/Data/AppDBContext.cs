@@ -1,5 +1,6 @@
 ﻿using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using myAISapi.Models;
 using System;
 using System.Data;
 using System.Threading.Tasks;
@@ -79,6 +80,8 @@ namespace myAISapi.Data
 
 			return result; // Trả về dictionary có thể serialize thành JSON
 		}
+
+		public DbSet<User> Users { get; set; }
 
 	}
 }

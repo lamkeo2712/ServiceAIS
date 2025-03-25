@@ -63,7 +63,7 @@ namespace myAISapi.Services
 							var dbContext = scope.ServiceProvider.GetRequiredService<AppDBContext>();
 							var ThamSoJSON = JsonSerializer.Serialize(ship);
 
-							_logger.LogInformation($"processing ship: {ship}");
+							_logger.LogInformation($"processing ship: {ThamSoJSON}");
 							var exec = await dbContext.ExecuteProcedureAsync(
 								"Proc_DM_Tau_Update",
 								ThamSoJSON,
@@ -106,7 +106,7 @@ namespace myAISapi.Services
 							var dbContext = scope.ServiceProvider.GetRequiredService<AppDBContext>();
 							var ThamSoJSON = JsonSerializer.Serialize(route);
 
-							_logger.LogInformation($"processing route: {ThamSoJSON}");
+							//_logger.LogInformation($"processing route: {ThamSoJSON}");
 							var exec = await dbContext.ExecuteProcedureAsync(
 								"Proc_QL_HanhTrinh_Update",
 								ThamSoJSON,

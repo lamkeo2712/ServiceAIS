@@ -1,12 +1,15 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using myAISapi.Data;
 using Newtonsoft.Json;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace myAISapi.Controllers
 {
 	[Route("api/[controller]")]
 	[ApiController]
+	[Authorize]
 	public class ShipController : ControllerBase
 	{
 		private readonly AppDBContext _context;
@@ -17,6 +20,7 @@ namespace myAISapi.Controllers
 		}
 
 		[HttpPost]
+		[AllowAnonymous]
 		[Route("Data/DoRequest")]
 		public async Task<object> DoRequest([FromBody] RequestModel request)
 		{
@@ -29,7 +33,7 @@ namespace myAISapi.Controllers
 			return await _context.ExecuteProcedureAsync(
 				request.ProcedureName,
 				request.ThamSo,
-				"test"
+				HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value ?? "test"
 			);
 		}
 	}

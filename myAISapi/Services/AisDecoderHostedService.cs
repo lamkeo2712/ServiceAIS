@@ -61,31 +61,6 @@ namespace myAISapi.Services
 							try
 							{
 								dynamic result = MainDecode.AisDecode(s);
-								//using (var scope = _scopeFactory.CreateScope())
-								//{
-								//	var dbContext = scope.ServiceProvider.GetRequiredService<AppDBContext>();
-								//	var ThamSoJSON = JsonSerializer.Serialize(new
-								//	{
-								//		raw_message = s,
-								//		received_at = DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ss.fffZ")
-								//	});
-								//	var exec = await dbContext.ExecuteProcedureAsync(
-								//		"Proc_Rawdata_Update",
-								//		ThamSoJSON,
-								//		"Admin"
-								//	);
-
-								//	if (exec == 0)
-								//	{
-								//		Console.WriteLine("Không thể chèn dữ liệu AIS.");
-								//	}
-								//	else
-								//	{
-								//		Console.WriteLine("Dữ liệu AIS đã được lưu vào database.");
-								//	}
-								//}
-
-
 								var messageCount = result.MessageCount;
 								var fragNumber = result.FragNumber;
 								var payload = result.Payload;
@@ -110,7 +85,6 @@ namespace myAISapi.Services
 													if (IsTauValid((DM_Tau)tau))
 													{
 														_shipStore.AddShip((DM_Tau)tau);
-														_shipHsStore.AddShip((DM_Tau)tau);
 													}
 												}
 												if (hanhtrinh is not string) {
