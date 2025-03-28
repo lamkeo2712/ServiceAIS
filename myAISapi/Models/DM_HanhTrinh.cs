@@ -1,7 +1,11 @@
-﻿namespace myAISapi.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace myAISapi.Models
 {
 	public class DM_HanhTrinh
 	{
+		[Key]
+		public int MaHanhTrinh { get; set; }
 		public int MMSI { get; set; }
 		public int? NavigationStatus { get; set; }
 		public double? RateOfTurn { get; set; }
@@ -20,5 +24,6 @@
 		public bool? DisplayFlag { get; set; }
 		public bool? DSCFlag { get; set; }
 		public DateTime? ETADateTime { get; set; }
+		public DateTime? CreatedAt { get; set; }
 	}
 }

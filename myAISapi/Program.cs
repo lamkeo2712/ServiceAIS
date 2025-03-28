@@ -19,7 +19,8 @@ builder.Services.AddDbContext<AppDBContext>(options =>
 // Add services to the container.
 
 // Au then ti cây sừn
-var publicKey = System.IO.File.ReadAllText("./Keys/public.key");
+var PublicKeyPath = builder.Configuration["Jwt:PublicKeyPath"];
+var publicKey = System.IO.File.ReadAllText(PublicKeyPath);
 var rsa = RSA.Create();
 rsa.ImportFromPem(publicKey);
 
@@ -34,9 +35,9 @@ builder.Services.AddAuthentication(options =>
 	options.TokenValidationParameters = new TokenValidationParameters
 	{
 		ValidateIssuer = true,
-		ValidIssuer = "http://localhost:5013", // Thay bằng issuer của bạn
+		ValidIssuer = builder.Configuration["Jwt:Issuer"], // Thay bằng issuer của bạn
 		ValidateAudience = true,
-		ValidAudience = "http://localhost:3030", // Thay bằng audience của bạn
+		ValidAudience = builder.Configuration["Jwt:Audience"], // Thay bằng audience của bạn
 		ValidateIssuerSigningKey = true,
 		IssuerSigningKey = new RsaSecurityKey(rsa),
 		ValidateLifetime = true,
@@ -48,12 +49,15 @@ builder.Services.AddAuthentication(options =>
 
 builder.Services.AddAuthorization(options =>
 { 
-	options.AddPolicy("AdminOnly", policy => policy.RequireRole("Administrator")); 
-	options.AddPolicy("GuestOnly", policy => policy.RequireRole("Guest")); 
+	options.AddPolicy("AdminOnly", policy => policy.RequireRole("Admin"));
+	options.AddPolicy("Admin&Guest", policy => policy.RequireRole("Guest,Admin"));
 });
 
+
+
+
+
 // Con trôn lơ
-builder.Services.AddControllers();
 builder.Services.AddControllers().AddJsonOptions(options =>
 {
 	options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
@@ -64,6 +68,32 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+
+
+
+builder.Services.AddSingleton<IUdpMessageStore, UdpMessageStore>();
+builder.Services.AddSingleton<IDecodedAISStore, DecodedAISStore>();
+builder.Services.AddSingleton<IDM_HanhTrinh_Store, DM_HanhTrinh_Store>();
+builder.Services.AddSingleton<IDM_Tau_Store, DM_Tau_Store>();
+builder.Services.AddSingleton<UdpListenerService>();
+
+
+builder.Services.AddHostedService<UdpListenerService>(provider => provider.GetRequiredService<UdpListenerService>());
+builder.Services.AddHostedService<AisDecoderHostedService>();
+builder.Services.AddHostedService<AisDBService>();
+//builder.Services.AddSingleton<AisDecoderService>();
+
+builder.Services.AddCors(options =>
+{
+	options.AddPolicy("AllowReactApp",
+		policy =>
+		{
+			policy.WithOrigins(builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>()) // Thay đổi URL nếu React chạy trên domain khác
+				  .AllowAnyMethod()
+				  .AllowAnyHeader();
+		});
+});
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
@@ -95,29 +125,6 @@ builder.Services.AddSwaggerGen(c =>
 			new string[] {}
 		}
 	});
-});
-
-builder.Services.AddSingleton<IUdpMessageStore, UdpMessageStore>();
-builder.Services.AddSingleton<IDecodedAISStore, DecodedAISStore>();
-builder.Services.AddSingleton<IDM_HanhTrinh_Store, DM_HanhTrinh_Store>();
-builder.Services.AddSingleton<IDM_Tau_HS_Store, DM_Tau_HS_Store>();
-builder.Services.AddSingleton<IDM_Tau_Store, DM_Tau_Store>();
-
-
-builder.Services.AddHostedService<UdpListenerService>();
-builder.Services.AddHostedService<AisDecoderHostedService>();
-builder.Services.AddHostedService<AisDBService>();
-//builder.Services.AddSingleton<AisDecoderService>();
-
-builder.Services.AddCors(options =>
-{
-	options.AddPolicy("AllowReactApp",
-		policy =>
-		{
-			policy.WithOrigins("http://localhost:3030") // Thay đổi URL nếu React chạy trên domain khác
-				  .AllowAnyMethod()
-				  .AllowAnyHeader();
-		});
 });
 
 //builder.Services.AddScoped<ProcMaster>();

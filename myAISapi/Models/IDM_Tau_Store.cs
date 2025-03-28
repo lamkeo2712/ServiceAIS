@@ -6,5 +6,6 @@
 		IEnumerable<DM_Tau> GetAllShip();
 		void ClearMessages();
 		void DeleteFirstMessage();
+		void DeleteMessages(IEnumerable<DM_Tau> batch);
 	}
 }

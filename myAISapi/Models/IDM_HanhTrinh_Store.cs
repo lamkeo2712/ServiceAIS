@@ -6,5 +6,7 @@
 		IEnumerable<DM_HanhTrinh> GetAllRoute();
 		void ClearMessages();
 		void DeleteFirstMessage();
+
+		void DeleteMessages(IEnumerable<DM_HanhTrinh> batch);
 	}
 }

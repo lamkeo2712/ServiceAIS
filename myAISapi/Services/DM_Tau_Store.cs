@@ -35,5 +35,13 @@ namespace myAISapi.Services
 				_ship.TryRemove(firstKey, out _);
 			}
 		}
+
+		public void DeleteMessages(IEnumerable<DM_Tau> batch)
+		{
+			foreach (var message in batch.ToList()) 
+			{
+				_ship.TryRemove(message.MMSI, out _);
+			}
+		}
 	}
 }

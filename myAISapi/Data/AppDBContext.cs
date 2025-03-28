@@ -83,5 +83,11 @@ namespace myAISapi.Data
 
 		public DbSet<User> Users { get; set; }
 
+		public DbSet<DM_Tau> DM_Tau { get; set; }
+
+		public DbSet<DM_Tau_HS> DM_Tau_HS { get; set; }
+
+		public DbSet<DM_HanhTrinh> QL_HanhTrinh { get; set; }
+
 	}
 }

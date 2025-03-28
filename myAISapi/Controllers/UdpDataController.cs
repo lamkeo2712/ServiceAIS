@@ -12,11 +12,9 @@ namespace myAISapi.Controllers
 	[Authorize]
 	public class UdpDataController : ControllerBase
 	{
-		private readonly ILogger<AisDecoderHostedService> _logger;
 		private readonly IUdpMessageStore _messageStore;
 		private readonly IDecodedAISStore _decodedAISStore;
 		private readonly IDM_Tau_Store _shipStore;
-		private readonly IDM_Tau_HS_Store _shipHsStore;
 		private readonly IDM_HanhTrinh_Store _routeStore;
 		private readonly IServiceScopeFactory _scopeFactory;
 
@@ -25,14 +23,12 @@ namespace myAISapi.Controllers
 			IDecodedAISStore decodedAISStore,
 			IServiceScopeFactory scopeFactory,
 			IDM_Tau_Store shipStore,
-			IDM_Tau_HS_Store shipHsStore,
 			IDM_HanhTrinh_Store routeStore)
 		{
 			_messageStore = messageStore;
 			_decodedAISStore = decodedAISStore;
 			_scopeFactory = scopeFactory;
 			_shipStore = shipStore;
-			_shipHsStore = shipHsStore;
 			_routeStore = routeStore;
 		}
 
@@ -50,7 +46,7 @@ namespace myAISapi.Controllers
 			return Ok(_shipStore.GetAllShip());
 		}
 		[HttpGet("hanhtrinh")]
-		[Authorize(Policy = "GuestOnly")]
+		[Authorize(Policy = "Admin&Guest")]
 		public IActionResult GetRoute()
 		{
 			return Ok(_routeStore.GetAllRoute());

@@ -14,31 +14,28 @@ namespace myAISapi.Services
 	public class AisDecoderHostedService : BackgroundService
 	{
 		private readonly ILogger<AisDecoderHostedService> _logger;
-		private readonly IUdpMessageStore _messageStore;
+		//private readonly IUdpMessageStore _messageStore;
 		private readonly IDecodedAISStore _decodedAISStore;
 		private readonly IDM_Tau_Store _shipStore;
-		private readonly IDM_Tau_HS_Store _shipHsStore;
 		private readonly IDM_HanhTrinh_Store _routeStore;
 		private readonly IServiceScopeFactory _scopeFactory;
+		private readonly UdpListenerService _udpListenerService;
 
-		DataHelper dataHelper = new DataHelper();
 
 		public AisDecoderHostedService(
 			ILogger<AisDecoderHostedService> logger,
-			IUdpMessageStore messageStore,
 			IDecodedAISStore decodedAISStore,
 			IServiceScopeFactory scopeFactory,
 			IDM_Tau_Store shipStore,
-			IDM_Tau_HS_Store shipHsStore,
-			IDM_HanhTrinh_Store routeStore)
+			IDM_HanhTrinh_Store routeStore,
+			UdpListenerService udpListenerService)
 		{
-			_messageStore = messageStore;
 			_decodedAISStore = decodedAISStore;
 			_logger = logger;
 			_scopeFactory = scopeFactory;
 			_shipStore = shipStore;
-			_shipHsStore = shipHsStore;
 			_routeStore = routeStore;
+			_udpListenerService = udpListenerService;
 		}
 
 		// Thực hiện xử lý chạy nền tại đây
@@ -46,95 +43,89 @@ namespace myAISapi.Services
 		{
 			_logger.LogInformation("AIS Decoder Hosted Service is running.");
 
-			while (!stoppingToken.IsCancellationRequested)
+			var messageQueue = _udpListenerService.GetMessageQueue();//.GetConsumingEnumerable(stoppingToken);
+
+			await Parallel.ForEachAsync(messageQueue.GetConsumingEnumerable(stoppingToken),
+				new ParallelOptions { MaxDegreeOfParallelism = Environment.ProcessorCount }, // Giới hạn số lượng task song song
+				async (msg, ct) => // ct là CancellationToken
+			//foreach (var msg in messageQueue)
 			{
-				if (_messageStore.GetAllMessages().Length > 0)
-				{
 					try
 					{
+						//Console.WriteLine($"Batch: {msg}");
 						string fullPayload = "";
-						string msg = _messageStore.GetAllMessages()[0].Trim();
 						string[] splitMsg = msg.Split("\n");
 
 						foreach (string s in splitMsg)
 						{
 							try
 							{
+								//Console.WriteLine($"S: {s}");
+
 								dynamic result = MainDecode.AisDecode(s);
-								var messageCount = result.MessageCount;
-								var fragNumber = result.FragNumber;
-								var payload = result.Payload;
-
-								fullPayload += payload;
-
-								if (fragNumber == messageCount)
+								if (result is not string)
 								{
-									try
+									var messageCount = result.MessageCount;
+									var fragNumber = result.FragNumber;
+									var payload = result.Payload;
+									fullPayload += payload;
+									if (fragNumber == messageCount)
 									{
-										var decodedData = MainDecode.PayloadDecode(fullPayload);
-										if (decodedData is not string)
+										try
 										{
-											_decodedAISStore.AddDecodedMessage((DecodedAISMessage)decodedData);
-											try
+											var decodedData = MainDecode.PayloadDecode(fullPayload);
+											if (decodedData is not string)
 											{
-												var tau = dataHelper.Ship((DecodedAISMessage)decodedData);
-												var hanhtrinh = dataHelper.Route((DecodedAISMessage)decodedData);
-												//_logger.LogInformation(JsonSerializer.Serialize(tau));
-												if (tau is not string )
-												{
-													if (IsTauValid((DM_Tau)tau))
-													{
-														_shipStore.AddShip((DM_Tau)tau);
-													}
-												}
-												if (hanhtrinh is not string) {
-													if (IsHanhTrinhValid((DM_HanhTrinh)hanhtrinh))
-													{
-														_routeStore.AddRoute((DM_HanhTrinh)hanhtrinh);
-														//_logger.LogInformation(JsonSerializer.Serialize((DM_HanhTrinh)hanhtrinh));
-													}
-												}
-												//else
-												//{
-												//	_logger.LogInformation($"loi: {hanhtrinh.ToString()} ");
-												//}
-											}
-											catch (Exception Ex)
-											{
-												_logger.LogError($"Error parsing data: {Ex.Message}");
+												//Console.WriteLine($"decoded: {JsonSerializer.Serialize(decodedData)}");
+												_decodedAISStore.AddDecodedMessage((DecodedAISMessage)decodedData);
+												await ProcessDecodedMessage((DecodedAISMessage)decodedData); // Chuyển sang async
+												fullPayload = "";
 											}
 										}
-										//_logger.LogInformation(JsonSerializer.Serialize(decodedData));
-
-										fullPayload = "";
-									}
-									catch (Exception decodeEx)
-									{
-										_logger.LogError($"Error decoding payload: {decodeEx.Message}");
+										catch (Exception decodeEx)
+										{
+											_logger.LogError($"Error decoding payload: {decodeEx.Message}");
+										}
 									}
 								}
 							}
 							catch (Exception decodeEx)
 							{
 								_logger.LogError($"Error in AisDecode: {decodeEx.Message}");
-								continue; // Tiếp tục vòng lặp dù có lỗi
 							}
 						}
-
-						// Chỉ chạy khi tất cả tin nhắn đã xử lý
-						_messageStore.Delete(); // Xóa tin nhắn đầu tiên
-						_logger.LogInformation($"đã xoá");
 					}
 					catch (Exception ex)
 					{
 						_logger.LogError($"Error in AIS decoder loop: {ex.Message}");
 					}
-				}
-
-				await Task.Delay(TimeSpan.FromMilliseconds(500), stoppingToken);
-			}
+				});
 
 			_logger.LogInformation("AIS Decoder Hosted Service is stopping.");
+		}
+
+		private async Task ProcessDecodedMessage(DecodedAISMessage message)
+		{
+			//Sử dụng scope để lấy DbContext một cách chính xác
+			using (var scope = _scopeFactory.CreateScope())
+			{
+				
+				var shipStore = scope.ServiceProvider.GetRequiredService<IDM_Tau_Store>();
+				var routeStore = scope.ServiceProvider.GetRequiredService<IDM_HanhTrinh_Store>();
+
+				var tau = myAISapi.Data.DataHelper.Ship(message);
+				var hanhtrinh = myAISapi.Data.DataHelper.Route(message);
+
+				if (tau is DM_Tau validTau && IsTauValid(validTau))
+				{
+					shipStore.AddShip(validTau);
+				}
+
+				if (hanhtrinh is DM_HanhTrinh validRoute && IsHanhTrinhValid(validRoute))
+				{
+					routeStore.AddRoute(validRoute);
+				}
+			}
 		}
 
 		private bool IsTauValid(DM_Tau tau)

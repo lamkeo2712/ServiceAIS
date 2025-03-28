@@ -3,48 +3,24 @@
   "WorkspaceRootPath": "D:\\Study\\Git\\ServiceAIS\\ServiceAIS\\myAISapi\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{1238F3B1-F7E5-40BF-825F-17D7420047AA}|myAISapi.csproj|d:\\study\\git\\serviceais\\serviceais\\myaisapi\\services\\dm_tau_store.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{1238F3B1-F7E5-40BF-825F-17D7420047AA}|myAISapi.csproj|solutionrelative:services\\dm_tau_store.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{1238F3B1-F7E5-40BF-825F-17D7420047AA}|myAISapi.csproj|d:\\study\\git\\serviceais\\serviceais\\myaisapi\\data\\datahelper.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1238F3B1-F7E5-40BF-825F-17D7420047AA}|myAISapi.csproj|solutionrelative:data\\datahelper.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1238F3B1-F7E5-40BF-825F-17D7420047AA}|myAISapi.csproj|d:\\study\\git\\serviceais\\serviceais\\myaisapi\\services\\aisdbservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1238F3B1-F7E5-40BF-825F-17D7420047AA}|myAISapi.csproj|solutionrelative:services\\aisdbservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1238F3B1-F7E5-40BF-825F-17D7420047AA}|myAISapi.csproj|d:\\study\\git\\serviceais\\serviceais\\myaisapi\\services\\aisdecoderhostedservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1238F3B1-F7E5-40BF-825F-17D7420047AA}|myAISapi.csproj|solutionrelative:services\\aisdecoderhostedservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1238F3B1-F7E5-40BF-825F-17D7420047AA}|myAISapi.csproj|d:\\study\\git\\serviceais\\serviceais\\myaisapi\\services\\udplistenerservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1238F3B1-F7E5-40BF-825F-17D7420047AA}|myAISapi.csproj|solutionrelative:services\\udplistenerservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{1238F3B1-F7E5-40BF-825F-17D7420047AA}|myAISapi.csproj|d:\\study\\git\\serviceais\\serviceais\\myaisapi\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{1238F3B1-F7E5-40BF-825F-17D7420047AA}|myAISapi.csproj|solutionrelative:program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{1238F3B1-F7E5-40BF-825F-17D7420047AA}|myAISapi.csproj|d:\\study\\git\\serviceais\\serviceais\\myaisapi\\migrations\\appdbcontextmodelsnapshot.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{1238F3B1-F7E5-40BF-825F-17D7420047AA}|myAISapi.csproj|solutionrelative:migrations\\appdbcontextmodelsnapshot.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{1238F3B1-F7E5-40BF-825F-17D7420047AA}|myAISapi.csproj|d:\\study\\git\\serviceais\\serviceais\\myaisapi\\migrations\\20250325042738_adduserstable.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{1238F3B1-F7E5-40BF-825F-17D7420047AA}|myAISapi.csproj|solutionrelative:migrations\\20250325042738_adduserstable.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{1238F3B1-F7E5-40BF-825F-17D7420047AA}|myAISapi.csproj|d:\\study\\git\\serviceais\\serviceais\\myaisapi\\migrations\\20250325042738_adduserstable.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{1238F3B1-F7E5-40BF-825F-17D7420047AA}|myAISapi.csproj|solutionrelative:migrations\\20250325042738_adduserstable.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{1238F3B1-F7E5-40BF-825F-17D7420047AA}|myAISapi.csproj|d:\\study\\git\\serviceais\\serviceais\\myaisapi\\keys\\private.key||{8B382828-6202-11D1-8870-0000F87579D2}",
-      "RelativeMoniker": "D:0:0:{1238F3B1-F7E5-40BF-825F-17D7420047AA}|myAISapi.csproj|solutionrelative:keys\\private.key||{8B382828-6202-11D1-8870-0000F87579D2}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{1238F3B1-F7E5-40BF-825F-17D7420047AA}|myAISapi.csproj|d:\\study\\git\\serviceais\\serviceais\\myaisapi\\controllers\\authencontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{1238F3B1-F7E5-40BF-825F-17D7420047AA}|myAISapi.csproj|solutionrelative:controllers\\authencontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{1238F3B1-F7E5-40BF-825F-17D7420047AA}|myAISapi.csproj|d:\\study\\git\\serviceais\\serviceais\\myaisapi\\controllers\\shipcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{1238F3B1-F7E5-40BF-825F-17D7420047AA}|myAISapi.csproj|solutionrelative:controllers\\shipcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{1238F3B1-F7E5-40BF-825F-17D7420047AA}|myAISapi.csproj|d:\\study\\git\\serviceais\\serviceais\\myaisapi\\data\\appdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{1238F3B1-F7E5-40BF-825F-17D7420047AA}|myAISapi.csproj|solutionrelative:data\\appdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{1238F3B1-F7E5-40BF-825F-17D7420047AA}|myAISapi.csproj|d:\\study\\git\\serviceais\\serviceais\\myaisapi\\controllers\\udpdatacontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{1238F3B1-F7E5-40BF-825F-17D7420047AA}|myAISapi.csproj|solutionrelative:controllers\\udpdatacontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{1238F3B1-F7E5-40BF-825F-17D7420047AA}|myAISapi.csproj|d:\\study\\git\\serviceais\\serviceais\\myaisapi\\models\\user.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{1238F3B1-F7E5-40BF-825F-17D7420047AA}|myAISapi.csproj|solutionrelative:models\\user.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -53,72 +29,20 @@
       "VerticalTabListWidth": 256,
       "DocumentGroups": [
         {
-          "DockedWidth": 245,
+          "DockedWidth": 180,
           "SelectedChildIndex": 0,
           "Children": [
             {
               "$type": "Document",
               "DocumentIndex": 0,
-              "Title": "DM_Tau_Store.cs",
-              "DocumentMoniker": "D:\\Study\\Git\\ServiceAIS\\ServiceAIS\\myAISapi\\Services\\DM_Tau_Store.cs",
-              "RelativeDocumentMoniker": "Services\\DM_Tau_Store.cs",
-              "ToolTip": "D:\\Study\\Git\\ServiceAIS\\ServiceAIS\\myAISapi\\Services\\DM_Tau_Store.cs",
-              "RelativeToolTip": "Services\\DM_Tau_Store.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAsAAAAtAAAA",
+              "Title": "DataHelper.cs",
+              "DocumentMoniker": "D:\\Study\\Git\\ServiceAIS\\ServiceAIS\\myAISapi\\Data\\DataHelper.cs",
+              "RelativeDocumentMoniker": "Data\\DataHelper.cs",
+              "ToolTip": "D:\\Study\\Git\\ServiceAIS\\ServiceAIS\\myAISapi\\Data\\DataHelper.cs",
+              "RelativeToolTip": "Data\\DataHelper.cs",
+              "ViewState": "AQIAAAUAAAAAAAAAAAAxwCUAAAAfAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-03-25T08:31:09.225Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "AppDBContextModelSnapshot.cs",
-              "DocumentMoniker": "D:\\Study\\Git\\ServiceAIS\\ServiceAIS\\myAISapi\\Migrations\\AppDBContextModelSnapshot.cs",
-              "RelativeDocumentMoniker": "Migrations\\AppDBContextModelSnapshot.cs",
-              "ToolTip": "D:\\Study\\Git\\ServiceAIS\\ServiceAIS\\myAISapi\\Migrations\\AppDBContextModelSnapshot.cs",
-              "RelativeToolTip": "Migrations\\AppDBContextModelSnapshot.cs",
-              "ViewState": "AQIAACQAAAAAAAAAAAD4vzEAAAAKAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-03-25T08:30:46.878Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "20250325042738_AddUsersTable.Designer.cs",
-              "DocumentMoniker": "D:\\Study\\Git\\ServiceAIS\\ServiceAIS\\myAISapi\\Migrations\\20250325042738_AddUsersTable.Designer.cs",
-              "RelativeDocumentMoniker": "Migrations\\20250325042738_AddUsersTable.Designer.cs",
-              "ToolTip": "D:\\Study\\Git\\ServiceAIS\\ServiceAIS\\myAISapi\\Migrations\\20250325042738_AddUsersTable.Designer.cs",
-              "RelativeToolTip": "Migrations\\20250325042738_AddUsersTable.Designer.cs",
-              "ViewState": "AQIAACQAAAAAAAAAAAAiwDIAAAAZAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-03-25T08:30:45.054Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "20250325042738_AddUsersTable.cs",
-              "DocumentMoniker": "D:\\Study\\Git\\ServiceAIS\\ServiceAIS\\myAISapi\\Migrations\\20250325042738_AddUsersTable.cs",
-              "RelativeDocumentMoniker": "Migrations\\20250325042738_AddUsersTable.cs",
-              "ToolTip": "D:\\Study\\Git\\ServiceAIS\\ServiceAIS\\myAISapi\\Migrations\\20250325042738_AddUsersTable.cs",
-              "RelativeToolTip": "Migrations\\20250325042738_AddUsersTable.cs",
-              "ViewState": "AQIAAA0AAAAAAAAAAAAiwBsAAAAhAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-03-25T08:30:39.972Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "private.key",
-              "DocumentMoniker": "D:\\Study\\Git\\ServiceAIS\\ServiceAIS\\myAISapi\\Keys\\private.key",
-              "RelativeDocumentMoniker": "Keys\\private.key",
-              "ToolTip": "D:\\Study\\Git\\ServiceAIS\\ServiceAIS\\myAISapi\\Keys\\private.key",
-              "RelativeToolTip": "Keys\\private.key",
-              "ViewState": "AQIAAAsAAAAAAAAAAAAvwBoAAAAVAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
-              "WhenOpened": "2025-03-25T08:30:33.838Z",
+              "WhenOpened": "2025-03-28T04:22:22.179Z",
               "EditorCaption": ""
             },
             {
@@ -127,80 +51,54 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 10,
-              "Title": "User.cs",
-              "DocumentMoniker": "D:\\Study\\Git\\ServiceAIS\\ServiceAIS\\myAISapi\\Models\\User.cs",
-              "RelativeDocumentMoniker": "Models\\User.cs",
-              "ToolTip": "D:\\Study\\Git\\ServiceAIS\\ServiceAIS\\myAISapi\\Models\\User.cs",
-              "RelativeToolTip": "Models\\User.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAqwBQAAAASAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-03-25T07:06:40.199Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 7,
-              "Title": "ShipController.cs",
-              "DocumentMoniker": "D:\\Study\\Git\\ServiceAIS\\ServiceAIS\\myAISapi\\Controllers\\ShipController.cs",
-              "RelativeDocumentMoniker": "Controllers\\ShipController.cs",
-              "ToolTip": "D:\\Study\\Git\\ServiceAIS\\ServiceAIS\\myAISapi\\Controllers\\ShipController.cs",
-              "RelativeToolTip": "Controllers\\ShipController.cs",
-              "ViewState": "AQIAAAEAAAAAAAAAAAAYwAsAAAAMAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-03-25T06:52:34.123Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 8,
-              "Title": "AppDBContext.cs",
-              "DocumentMoniker": "D:\\Study\\Git\\ServiceAIS\\ServiceAIS\\myAISapi\\Data\\AppDBContext.cs",
-              "RelativeDocumentMoniker": "Data\\AppDBContext.cs",
-              "ToolTip": "D:\\Study\\Git\\ServiceAIS\\ServiceAIS\\myAISapi\\Data\\AppDBContext.cs",
-              "RelativeToolTip": "Data\\AppDBContext.cs",
-              "ViewState": "AQIAAEYAAAAAAAAAAAAswFMAAAATAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-03-25T04:25:40.588Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 9,
-              "Title": "UdpDataController.cs",
-              "DocumentMoniker": "D:\\Study\\Git\\ServiceAIS\\ServiceAIS\\myAISapi\\Controllers\\UdpDataController.cs",
-              "RelativeDocumentMoniker": "Controllers\\UdpDataController.cs",
-              "ToolTip": "D:\\Study\\Git\\ServiceAIS\\ServiceAIS\\myAISapi\\Controllers\\UdpDataController.cs",
-              "RelativeToolTip": "Controllers\\UdpDataController.cs",
-              "ViewState": "AQIAAAYAAAAAAAAAAAAmwDYAAAACAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-03-19T01:59:27.886Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 6,
-              "Title": "AuthenController.cs",
-              "DocumentMoniker": "D:\\Study\\Git\\ServiceAIS\\ServiceAIS\\myAISapi\\Controllers\\AuthenController.cs",
-              "RelativeDocumentMoniker": "Controllers\\AuthenController.cs",
-              "ToolTip": "D:\\Study\\Git\\ServiceAIS\\ServiceAIS\\myAISapi\\Controllers\\AuthenController.cs*",
-              "RelativeToolTip": "Controllers\\AuthenController.cs*",
-              "ViewState": "AQIAAHgAAAAAAAAAAAAUwIUAAABCAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-03-18T03:50:39.453Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
               "DocumentIndex": 1,
+              "Title": "AisDBService.cs",
+              "DocumentMoniker": "D:\\Study\\Git\\ServiceAIS\\ServiceAIS\\myAISapi\\Services\\AisDBService.cs",
+              "RelativeDocumentMoniker": "Services\\AisDBService.cs",
+              "ToolTip": "D:\\Study\\Git\\ServiceAIS\\ServiceAIS\\myAISapi\\Services\\AisDBService.cs",
+              "RelativeToolTip": "Services\\AisDBService.cs",
+              "ViewState": "AQIAADEAAAAAAAAAAAAQwE0AAAAIAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-03-28T03:02:02.142Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
               "Title": "Program.cs",
               "DocumentMoniker": "D:\\Study\\Git\\ServiceAIS\\ServiceAIS\\myAISapi\\Program.cs",
               "RelativeDocumentMoniker": "Program.cs",
-              "ToolTip": "D:\\Study\\Git\\ServiceAIS\\ServiceAIS\\myAISapi\\Program.cs*",
-              "RelativeToolTip": "Program.cs*",
-              "ViewState": "AQIAABsAAAAAAAAAAAD4vygAAAAPAAAA",
+              "ToolTip": "D:\\Study\\Git\\ServiceAIS\\ServiceAIS\\myAISapi\\Program.cs",
+              "RelativeToolTip": "Program.cs",
+              "ViewState": "AQIAAIQAAAAAAAAAAAAQwJUAAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-03-08T18:07:54.521Z",
+              "WhenOpened": "2025-03-28T02:31:15.728Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "AisDecoderHostedService.cs",
+              "DocumentMoniker": "D:\\Study\\Git\\ServiceAIS\\ServiceAIS\\myAISapi\\Services\\AisDecoderHostedService.cs",
+              "RelativeDocumentMoniker": "Services\\AisDecoderHostedService.cs",
+              "ToolTip": "D:\\Study\\Git\\ServiceAIS\\ServiceAIS\\myAISapi\\Services\\AisDecoderHostedService.cs",
+              "RelativeToolTip": "Services\\AisDecoderHostedService.cs",
+              "ViewState": "AQIAADoAAAAAAAAAAAAQwE4AAAAOAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-03-28T02:23:28.233Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "UdpListenerService.cs",
+              "DocumentMoniker": "D:\\Study\\Git\\ServiceAIS\\ServiceAIS\\myAISapi\\Services\\UdpListenerService.cs",
+              "RelativeDocumentMoniker": "Services\\UdpListenerService.cs",
+              "ToolTip": "D:\\Study\\Git\\ServiceAIS\\ServiceAIS\\myAISapi\\Services\\UdpListenerService.cs",
+              "RelativeToolTip": "Services\\UdpListenerService.cs",
+              "ViewState": "AQIAAB0AAAAAAAAAAAAQwC8AAABCAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-03-28T02:23:12.813Z",
               "EditorCaption": ""
             }
           ]

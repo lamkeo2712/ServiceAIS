@@ -5,7 +5,7 @@ namespace myAISapi.Data
 {
 	public class DataHelper
 	{
-		public object Ship(DecodedAISMessage message)
+		public static object Ship(DecodedAISMessage message)
 		{
 			try
 			{
@@ -35,6 +35,7 @@ namespace myAISapi.Data
 					ShipWidth = SWidth,
 					Draught = message.Draught,
 					Destination = message.Destination,
+					AidType = message.AidType,
 					VirtualAidFlag = message.VirtualAidFlag,
 					OffPositionIndicator = message.OffPositionIndicator
 				};
@@ -49,7 +50,7 @@ namespace myAISapi.Data
 
 		}
 
-		public object Route(DecodedAISMessage message)
+		public static object Route(DecodedAISMessage message)
 		{
 			int ETAyear = message.ETAMonth > DateTime.Now.Month ? DateTime.Now.Year : DateTime.Now.Year + 1;
 			try
@@ -63,9 +64,15 @@ namespace myAISapi.Data
 					dtETA = new DateTime(ETAyear, message.ETAMonth, message.ETADay, message.ETAHour, message.ETAMinute, DateTime.Now.Second);
 				}
 				DateTime? dtUTC = null;
-				if(message.SecondUTC != -1)
+				if (message.SecondUTC != -1)
 				{
-					dtUTC = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, DateTime.Now.Hour, DateTime.Now.Minute, message.SecondUTC ?? 0);
+					DateTime baseTime = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, DateTime.Now.Hour, DateTime.Now.Minute, 0);
+					if (message.SecondUTC > DateTime.Now.Second)
+					{
+						baseTime = baseTime.AddMinutes(-1); // Giảm phút xuống một đơn vị
+					}
+
+					dtUTC = baseTime.AddSeconds(message.SecondUTC ?? 0);
 				}
 				DM_HanhTrinh hanhtrinh = new DM_HanhTrinh
 				{
