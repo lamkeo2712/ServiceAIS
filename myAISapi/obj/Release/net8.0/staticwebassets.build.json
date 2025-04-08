@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "Hash": "f6x61NckJg31ZehVLmqlZ4D7hyNC6SuS0/ST7a8HMJw=",
+  "Source": "myAISapi",
+  "BasePath": "_content/myAISapi",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}

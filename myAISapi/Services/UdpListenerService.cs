@@ -20,7 +20,7 @@ namespace myAISapi.Services
 		//private readonly IUdpMessageStore _messageStore;
 		private readonly BlockingCollection<string> _messageQueue = new BlockingCollection<string>();
 
-		private const int UdpPort = 60100;  // Cổng nhận dữ liệu UDP
+		private const int UdpPort = 60100; 
 
 		public UdpListenerService(ILogger<UdpListenerService> logger, IUdpMessageStore messageStore)
 		{
@@ -37,7 +37,7 @@ namespace myAISapi.Services
 			byte[] msg = Encoding.ASCII.GetBytes("a");
 			await _udpClient.SendAsync(msg, msg.Length);
 
-			Task.Run(async () => { // Chạy việc nhận tin nhắn trong một Task riêng
+			Task.Run(async () => { 
 				while (!stoppingToken.IsCancellationRequested)
 				{
 					try
@@ -45,12 +45,13 @@ namespace myAISapi.Services
 						var result = await _udpClient.ReceiveAsync();
 						string message = Encoding.UTF8.GetString(result.Buffer);
 
-						_messageQueue.Add(message, stoppingToken); // Thêm vào queue
+						_messageQueue.Add(message, stoppingToken);
 						//Console.WriteLine($"AllRoute: {JsonSerializer.Serialize(_messageQueue)}");
 					}
 					catch (Exception ex)
 					{
 						_logger.LogError($"❌ Error receiving UDP data: {ex.Message}");
+						continue; 
 					}
 				}
 			}, stoppingToken);

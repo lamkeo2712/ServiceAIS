@@ -74,6 +74,10 @@ namespace myAISapi.Data
 
 					dtUTC = baseTime.AddSeconds(message.SecondUTC ?? 0);
 				}
+				else
+				{
+					dtUTC = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, DateTime.Now.Hour, DateTime.Now.Minute, DateTime.Now.Second);
+				}
 				DM_HanhTrinh hanhtrinh = new DM_HanhTrinh
 				{
 					MMSI = message.MMSI,

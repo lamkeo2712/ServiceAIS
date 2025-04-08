@@ -123,3 +123,8 @@ D:\Study\Git\ServiceAIS\ServiceAIS\myAISapi\obj\Debug\net8.0\refint\myAISapi.dll
 D:\Study\Git\ServiceAIS\ServiceAIS\myAISapi\obj\Debug\net8.0\myAISapi.pdb
 D:\Study\Git\ServiceAIS\ServiceAIS\myAISapi\obj\Debug\net8.0\myAISapi.genruntimeconfig.cache
 D:\Study\Git\ServiceAIS\ServiceAIS\myAISapi\obj\Debug\net8.0\ref\myAISapi.dll
+D:\Study\Git\ServiceAIS\ServiceAIS\myAISapi\bin\Debug\net8.0\publish\web.config
+D:\Study\Git\ServiceAIS\ServiceAIS\myAISapi\bin\Debug\net8.0\publish\appsettings.Development.json
+D:\Study\Git\ServiceAIS\ServiceAIS\myAISapi\bin\Debug\net8.0\publish\appsettings.json
+D:\Study\Git\ServiceAIS\ServiceAIS\myAISapi\bin\Debug\net8.0\publish\myAISapi.deps.json
+D:\Study\Git\ServiceAIS\ServiceAIS\myAISapi\bin\Debug\net8.0\publish\myAISapi.runtimeconfig.json

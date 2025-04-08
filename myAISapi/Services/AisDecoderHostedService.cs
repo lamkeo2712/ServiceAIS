@@ -77,7 +77,7 @@ namespace myAISapi.Services
 											if (decodedData is not string)
 											{
 												//Console.WriteLine($"decoded: {JsonSerializer.Serialize(decodedData)}");
-												_decodedAISStore.AddDecodedMessage((DecodedAISMessage)decodedData);
+												//_decodedAISStore.AddDecodedMessage((DecodedAISMessage)decodedData);
 												await ProcessDecodedMessage((DecodedAISMessage)decodedData); // Chuyển sang async
 												fullPayload = "";
 											}

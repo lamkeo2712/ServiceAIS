@@ -7,6 +7,7 @@ using System.Runtime.CompilerServices;
 using System.Text.Json;
 using EFCore.BulkExtensions;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 namespace myAISapi.Services
 {
@@ -129,7 +130,30 @@ namespace myAISapi.Services
 			// Bulk Update
 			if (toUpdate.Any())
 			{
-				ships.ForEach(s => s.UpdatedAt = DateTime.Now);
+				var existingShips = await context.DM_Tau
+					.Where(s => mmsiList.Contains(s.MMSI))
+					.ToDictionaryAsync(s => s.MMSI);
+
+				foreach (var ship in toUpdate)
+				{
+					if (existingShips.TryGetValue(ship.MMSI, out var existingShip))
+					{
+						ship.VesselName = string.IsNullOrEmpty(ship.VesselName) ? existingShip.VesselName : ship.VesselName;
+						ship.IMONumber = (ship.IMONumber == 0 || ship.IMONumber == null) ? existingShip.IMONumber : ship.IMONumber;
+						ship.CallSign = string.IsNullOrEmpty(ship.CallSign) ? existingShip.CallSign : ship.CallSign;
+						ship.ShipType = (ship.ShipType == 0 || ship.ShipType == null) ? existingShip.ShipType : ship.ShipType;
+						ship.AISVersion = (ship.AISVersion == 0 || ship.AISVersion == null) ? existingShip.AISVersion : ship.AISVersion;
+						ship.TypeOfEPFD = (ship.TypeOfEPFD == 0 || ship.TypeOfEPFD == null) ? existingShip.TypeOfEPFD : ship.TypeOfEPFD;
+						ship.ShipLength = (ship.ShipLength == 0 || ship.ShipLength == null) ? existingShip.ShipLength : ship.ShipLength;
+						ship.ShipWidth = (ship.ShipWidth == 0 || ship.ShipWidth == null) ? existingShip.ShipWidth : ship.ShipWidth;
+						ship.Draught = (ship.Draught == 0 || ship.Draught == null) ? existingShip.Draught : ship.Draught;
+						ship.Destination = string.IsNullOrEmpty(ship.Destination) ? existingShip.Destination : ship.Destination;
+						ship.VirtualAidFlag = !ship.VirtualAidFlag.HasValue ? existingShip.VirtualAidFlag : ship.VirtualAidFlag;
+						ship.OffPositionIndicator = !ship.OffPositionIndicator.HasValue ? existingShip.OffPositionIndicator : ship.OffPositionIndicator;
+						ship.AidType = (ship.AidType == 0 || ship.AidType == null) ? existingShip.AidType : ship.AidType;
+						ship.UpdatedAt = DateTime.Now;
+					}
+				}
 				await context.BulkUpdateAsync(toUpdate, config =>
 				{
 					config.BatchSize = 600;
@@ -257,25 +281,28 @@ namespace myAISapi.Services
 			// Xử lý các bản ghi
 			foreach (var route in routes)
 			{
-				if (route.Longitude == null || route.Latitude == null || route.CourseOverGround == null || route.TrueHeading == null)
+				if (route.Longitude == null || route.Latitude == null || route.CourseOverGround == null || route.TrueHeading == null || route.Longitude == 0 || route.Latitude == 0 || route.CourseOverGround == 0 || route.TrueHeading == 0)
 				{
 					// Lấy giá trị từ bản ghi mới nhất nếu các giá trị là NULL
 					var latestRoute = await context.QL_HanhTrinh
 						.AsNoTracking()
 						.Where(ht => ht.MMSI == route.MMSI)
-						.Where(ht => ht.Longitude != null && ht.Latitude != null && ht.CourseOverGround != null && ht.TrueHeading != null)
+						.Where(ht => ht.Longitude != null && ht.Latitude != null && ht.CourseOverGround != null && ht.TrueHeading != null && ht.Longitude != 0 && ht.Latitude != 0 && ht.CourseOverGround != 0 && ht.TrueHeading != 0)
 						.OrderByDescending(ht => ht.DateTimeUTC)
 						.FirstOrDefaultAsync();
 
-					if (latestRoute != null)
-					{
-						route.Longitude = latestRoute.Longitude;
-						route.Latitude = latestRoute.Latitude;
-						route.CourseOverGround = latestRoute.CourseOverGround;
-						route.TrueHeading = latestRoute.TrueHeading;
-					}
-				}
+					//Console.WriteLine($"latestRoute: {JsonSerializer.Serialize(latestRoute)}");
 
+					if (latestRoute == null)
+					{
+						continue;
+					}
+					route.Longitude = latestRoute.Longitude;
+					route.Latitude = latestRoute.Latitude;
+					route.CourseOverGround = latestRoute.CourseOverGround;
+					route.TrueHeading = latestRoute.TrueHeading;
+				}
+				 
 				if (!existingMmsis.Contains(route.MMSI))
 				{
 					// Only add to insert if it's not already in the context
