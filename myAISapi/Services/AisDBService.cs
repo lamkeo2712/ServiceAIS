@@ -287,7 +287,7 @@ namespace myAISapi.Services
 					var latestRoute = await context.QL_HanhTrinh
 						.AsNoTracking()
 						.Where(ht => ht.MMSI == route.MMSI)
-						.Where(ht => ht.Longitude != null && ht.Latitude != null && ht.CourseOverGround != null && ht.TrueHeading != null && ht.Longitude != 0 && ht.Latitude != 0 && ht.CourseOverGround != 0 && ht.TrueHeading != 0)
+						.Where(ht => ht.Longitude != null && ht.Latitude != null  && ht.Longitude != 0 && ht.Latitude != 0)
 						.OrderByDescending(ht => ht.DateTimeUTC)
 						.FirstOrDefaultAsync();
 
