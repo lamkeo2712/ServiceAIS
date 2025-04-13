@@ -297,10 +297,14 @@ namespace myAISapi.Services
 					{
 						continue;
 					}
-					route.Longitude = latestRoute.Longitude;
-					route.Latitude = latestRoute.Latitude;
-					route.CourseOverGround = latestRoute.CourseOverGround;
-					route.TrueHeading = latestRoute.TrueHeading;
+					if(route.Longitude == null || route.Longitude == 0)
+						route.Longitude = latestRoute.Longitude;
+					if (route.Latitude == null || route.Latitude == 0)
+						route.Latitude = latestRoute.Latitude;
+					if (route.CourseOverGround == null || route.CourseOverGround == 0)
+						route.CourseOverGround = latestRoute.CourseOverGround;
+					if (route.TrueHeading == null || route.TrueHeading == 0)
+						route.TrueHeading = latestRoute.TrueHeading;
 				}
 				 
 				if (!existingMmsis.Contains(route.MMSI))
