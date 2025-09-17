@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("myAISapi")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+f1d65395c39a0ffe5992f052831d1011cc0e38f9")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+220629c5e648efd1b039644d138c4a16b0d0248b")]
 [assembly: System.Reflection.AssemblyProductAttribute("myAISapi")]
 [assembly: System.Reflection.AssemblyTitleAttribute("myAISapi")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

@@ -94,7 +94,7 @@ namespace myAISapi.Decoder
                 case 1:
                 case 2:
                 case 3:
-                    return Type123(payloadBit);
+                    return Type123 (payloadBit);
                 case 4:
                     return Type4(payloadBit);
                 case 5:

@@ -75,12 +75,12 @@ builder.Services.AddSingleton<IUdpMessageStore, UdpMessageStore>();
 builder.Services.AddSingleton<IDecodedAISStore, DecodedAISStore>();
 builder.Services.AddSingleton<IDM_HanhTrinh_Store, DM_HanhTrinh_Store>();
 builder.Services.AddSingleton<IDM_Tau_Store, DM_Tau_Store>();
-builder.Services.AddSingleton<UdpListenerService>();
+//builder.Services.AddSingleton<UdpListenerService>();
 
 
-builder.Services.AddHostedService<UdpListenerService>(provider => provider.GetRequiredService<UdpListenerService>());
-builder.Services.AddHostedService<AisDecoderHostedService>();
-builder.Services.AddHostedService<AisDBService>();
+//builder.Services.AddHostedService<UdpListenerService>(provider => provider.GetRequiredService<UdpListenerService>());
+//builder.Services.AddHostedService<AisDecoderHostedService>();
+//builder.Services.AddHostedService<AisDBService>();
 //builder.Services.AddSingleton<AisDecoderService>();
 
 builder.Services.AddCors(options =>
