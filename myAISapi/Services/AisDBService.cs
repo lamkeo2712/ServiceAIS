@@ -322,20 +322,20 @@ namespace myAISapi.Services
 
 			}
 
-			//if (hanhTrinhsToInsert.Any())
-			//{
-			//	var dates = hanhTrinhsToInsert
-			//		.Where(r => r.DateTimeUTC.HasValue)
-			//		.Select(r => r.DateTimeUTC!.Value.Date)
-			//		.ToList();
+			if (hanhTrinhsToInsert.Any())
+			{
+				var dates = hanhTrinhsToInsert
+					.Where(r => r.DateTimeUTC.HasValue)
+					.Select(r => r.DateTimeUTC!.Value.Date)
+					.ToList();
 
-			//	if (dates.Count > 0)
-			//	{
-			//		await context.Database.ExecuteSqlRawAsync(
-			//			"EXEC dbo.usp_EnsurePartitionsForRange @p0, @p1",
-			//			dates.Min(), dates.Max());
-			//	}
-			//}
+				if (dates.Count > 0)
+				{
+					await context.Database.ExecuteSqlRawAsync(
+						"EXEC dbo.usp_EnsurePartitionsForRange @p0, @p1",
+						dates.Min(), dates.Max());
+				}
+			}
 
 			// Bulk Insert
 			if (tausToInsert.Any())
