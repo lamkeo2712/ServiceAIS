@@ -62,6 +62,7 @@ namespace myAISapi.Controllers
 			}
 			// Tạo claims
 			var claims = new[] {
+				new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
 				new Claim(ClaimTypes.Name, user.Username),
 				new Claim(ClaimTypes.Role, user.Role), // Lấy role từ database
             };
@@ -107,6 +108,7 @@ namespace myAISapi.Controllers
 
 			// Tạo access token mới
 			var claims = new[] {
+				new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
 				new Claim(ClaimTypes.Name, user.Username),
 				new Claim(ClaimTypes.Role, user.Role),
 			};
@@ -157,11 +159,13 @@ namespace myAISapi.Controllers
 		[HttpGet("GetUser")]
 		public IActionResult GetUser()
 		{
+			var userId = HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
 			var username = HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value;
 			var role = HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value;
 
 			var user = new
 			{
+				UserId = userId,
 				Username = username,
 				Role = role
 			};

@@ -25,8 +25,8 @@ namespace myAISapi.Services
 		public UdpListenerService(ILogger<UdpListenerService> logger, IUdpMessageStore messageStore)
 		{
 			_logger = logger;
-			//_messageStore = messageStore;
-			_udpClient = new UdpClient("ais-iot.pro.vn", 60100);
+			_udpClient = new UdpClient(10110);
+
 		}
 
 
@@ -34,8 +34,8 @@ namespace myAISapi.Services
 		{
 			_logger.LogInformation($"✅ UDP Listener started on port {UdpPort}.");
 			// Ping
-			byte[] msg = Encoding.ASCII.GetBytes("a");
-			await _udpClient.SendAsync(msg, msg.Length);
+			//byte[] msg = Encoding.ASCII.GetBytes("a");
+			//await _udpClient.SendAsync(msg, msg.Length);
 
 			Task.Run(async () =>
 			{
