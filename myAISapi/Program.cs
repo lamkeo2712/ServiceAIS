@@ -9,12 +9,37 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Security.Cryptography;
 using Microsoft.OpenApi.Models;
+using Cassandra;
+using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Đăng ký DbContext
 builder.Services.AddDbContext<AppDBContext>(options =>
 	options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+
+builder.Services.Configure<CassandraSettings>(builder.Configuration.GetSection("Cassandra"));
+
+builder.Services.AddSingleton<Cassandra.ISession>(sp =>
+{
+	var settings = sp.GetRequiredService<IOptions<CassandraSettings>>().Value;
+
+	var clusterBuilder = Cluster.Builder()
+		.AddContactPoints(settings.ContactPoints) // ví dụ: ["127.0.0.1"]
+		.WithPort(settings.Port);
+
+	if (!string.IsNullOrEmpty(settings.Username))
+	{
+		clusterBuilder = clusterBuilder.WithCredentials(settings.Username, settings.Password);
+	}
+
+	var cluster = clusterBuilder.Build();
+	var session = cluster.Connect(settings.Keyspace); // "ais"
+	return session;
+});
+builder.Services.AddSingleton<ICassandraHanhTrinhRepository, CassandraHanhTrinhRepository>();
+
 
 // Add services to the container.
 

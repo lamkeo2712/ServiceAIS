@@ -7,6 +7,7 @@ using System.Text.Json;
 using Azure.Core;
 using Microsoft.EntityFrameworkCore;
 using System.Text;
+using System.Threading.Channels;
 
 namespace myAISapi.Services
 {
@@ -67,6 +68,7 @@ namespace myAISapi.Services
 							{
 								var messageCount = result.MessageCount;
 								var fragNumber = result.FragNumber;
+								var channel = result.Channel;
 								var payload = result.Payload;
 								fullPayload += payload;
 								if (fragNumber == messageCount)
@@ -76,9 +78,10 @@ namespace myAISapi.Services
 										var decodedData = MainDecode.PayloadDecode(fullPayload);
 										if (decodedData is not string)
 										{
+											//Console.WriteLine(channel);
 											//Console.WriteLine($"decoded: {JsonSerializer.Serialize(decodedData)}");
 											//_decodedAISStore.AddDecodedMessage((DecodedAISMessage)decodedData);
-											await ProcessDecodedMessage((DecodedAISMessage)decodedData); // Chuyển sang async
+											await ProcessDecodedMessage((DecodedAISMessage)decodedData, channel); // Chuyển sang async
 											fullPayload = "";
 										}
 									}
@@ -104,7 +107,7 @@ namespace myAISapi.Services
 			_logger.LogInformation("AIS Decoder Hosted Service is stopping.");
 		}
 
-		private async Task ProcessDecodedMessage(DecodedAISMessage message)
+		private async Task ProcessDecodedMessage(DecodedAISMessage message, string channel)
 		{
 			//Sử dụng scope để lấy DbContext một cách chính xác
 			using (var scope = _scopeFactory.CreateScope())
@@ -113,8 +116,8 @@ namespace myAISapi.Services
 				var shipStore = scope.ServiceProvider.GetRequiredService<IDM_Tau_Store>();
 				var routeStore = scope.ServiceProvider.GetRequiredService<IDM_HanhTrinh_Store>();
 
-				var tau = myAISapi.Data.DataHelper.Ship(message);
-				var hanhtrinh = myAISapi.Data.DataHelper.Route(message);
+				var tau = myAISapi.Data.DataHelper.Ship(message, channel);
+				var hanhtrinh = myAISapi.Data.DataHelper.Route(message, channel);
 
 				if (tau is DM_Tau validTau && IsTauValid(validTau))
 				{

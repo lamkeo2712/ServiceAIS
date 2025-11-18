@@ -18,6 +18,7 @@ namespace myAISapi.Services
 		private readonly IServiceScopeFactory _scopeFactory;
 		private readonly IDM_Tau_Store _shipStore;
 		private readonly IDM_HanhTrinh_Store _routeStore;
+		private readonly ICassandraHanhTrinhRepository _cassandraHanhTrinhRepo;
 
 		public AisDBService(
 			//AisDecoderService aisDecoderService,
@@ -25,13 +26,15 @@ namespace myAISapi.Services
 			IDecodedAISStore decodedAISStore,
 			IServiceScopeFactory scopeFactory,
 			IDM_Tau_Store shipStore,
-			IDM_HanhTrinh_Store routeStore)
+			IDM_HanhTrinh_Store routeStore,
+			ICassandraHanhTrinhRepository cassandraHanhTrinhRepo)
 		{
 			_decodedAISStore = decodedAISStore;
 			_logger = logger;
 			_scopeFactory = scopeFactory;
 			_shipStore = shipStore;
 			_routeStore = routeStore;
+			_cassandraHanhTrinhRepo = cassandraHanhTrinhRepo;
 		}
 
 		// Thực hiện xử lý chạy nền tại đây
@@ -73,7 +76,7 @@ namespace myAISapi.Services
 							try
 							{
 								await BulkProcessShipsAsync(batch, dbContext);
-								await AddShipHistoryAsync(batch, dbContext);
+								//await AddShipHistoryAsync(batch, dbContext);
 								await transaction.CommitAsync();
 								//Console.WriteLine($"Batch: {JsonSerializer.Serialize(batch)}");
 								//Console.WriteLine("Du lieu tau đa đuoc luu vao database.");
@@ -153,6 +156,7 @@ namespace myAISapi.Services
 						ship.OffPositionIndicator = !ship.OffPositionIndicator.HasValue ? existingShip.OffPositionIndicator : ship.OffPositionIndicator;
 						ship.AidType = (ship.AidType == 0 || ship.AidType == null) ? existingShip.AidType : ship.AidType;
 						ship.UpdatedAt = DateTime.Now;
+						ship.MsgChannel = string.IsNullOrEmpty(ship.MsgChannel) ? existingShip.MsgChannel : ship.MsgChannel;
 					}
 				}
 				await context.BulkUpdateAsync(toUpdate, config =>
@@ -173,51 +177,52 @@ namespace myAISapi.Services
 						nameof(DM_Tau.VirtualAidFlag),
 						nameof(DM_Tau.OffPositionIndicator),
 						nameof(DM_Tau.UpdatedAt),
-						nameof(DM_Tau.AidType)
+						nameof(DM_Tau.AidType),
+						nameof(DM_Tau.MsgChannel)
 					};
 				});
 			}
 		}
 
-		private async Task AddShipHistoryAsync(List<DM_Tau> ships, AppDBContext context)
-		{
-			// Lấy mã hành trình mới nhất
-			var latestRoute = await context.QL_HanhTrinh
-				.Where(ht => ships.Select(s => s.MMSI).Contains(ht.MMSI))
-				.GroupBy(ht => ht.MMSI)
-				.Select(g => new
-				{
-					MMSI = g.Key,
-					MaHanhTrinh = g.Max(ht => ht.MaHanhTrinh)
-				})
-				.ToDictionaryAsync(x => x.MMSI, x => x.MaHanhTrinh);
+		//private async Task AddShipHistoryAsync(List<DM_Tau> ships, AppDBContext context)
+		//{
+		//	// Lấy mã hành trình mới nhất
+		//	var latestRoute = await context.QL_HanhTrinh
+		//		.Where(ht => ships.Select(s => s.MMSI).Contains(ht.MMSI))
+		//		.GroupBy(ht => ht.MMSI)
+		//		.Select(g => new
+		//		{
+		//			MMSI = g.Key,
+		//			MaHanhTrinh = g.Max(ht => ht.MaHanhTrinh)
+		//		})
+		//		.ToDictionaryAsync(x => x.MMSI, x => x.MaHanhTrinh);
 
-			var histories = ships.Select(s => new DM_Tau_HS
-			{
-				MMSI = s.MMSI,
-				MaHanhTrinh = latestRoute.TryGetValue(s.MMSI, out var voyage) ? voyage : 0,
-				VesselName = s.VesselName,
-				IMONumber = s.IMONumber,
-				CallSign = s.CallSign,
-				ShipType = s.ShipType,
-				AISVersion = s.AISVersion,
-				TypeOfEPFD = s.TypeOfEPFD,
-				ShipLength = s.ShipLength,
-				ShipWidth = s.ShipWidth,
-				Draught = s.Draught,
-				Destination = s.Destination,
-				VirtualAidFlag = s.VirtualAidFlag,
-				OffPositionIndicator = s.OffPositionIndicator,
-				CreatedAt = DateTime.Now,
-				UpdatedAt = DateTime.Now,
-				AidType = s.AidType
-			}).ToList();
+		//	var histories = ships.Select(s => new DM_Tau_HS
+		//	{
+		//		MMSI = s.MMSI,
+		//		MaHanhTrinh = latestRoute.TryGetValue(s.MMSI, out var voyage) ? voyage : 0,
+		//		VesselName = s.VesselName,
+		//		IMONumber = s.IMONumber,
+		//		CallSign = s.CallSign,
+		//		ShipType = s.ShipType,
+		//		AISVersion = s.AISVersion,
+		//		TypeOfEPFD = s.TypeOfEPFD,
+		//		ShipLength = s.ShipLength,
+		//		ShipWidth = s.ShipWidth,
+		//		Draught = s.Draught,
+		//		Destination = s.Destination,
+		//		VirtualAidFlag = s.VirtualAidFlag,
+		//		OffPositionIndicator = s.OffPositionIndicator,
+		//		CreatedAt = DateTime.Now,
+		//		UpdatedAt = DateTime.Now,
+		//		AidType = s.AidType
+		//	}).ToList();
 
-			await context.BulkInsertAsync(histories, config =>
-			{
-				config.BatchSize = 600;
-			});
-		}
+		//	await context.BulkInsertAsync(histories, config =>
+		//	{
+		//		config.BatchSize = 600;
+		//	});
+		//}
 
 
 		private async Task ProcessRoutesAsync(CancellationToken stoppingToken)
@@ -238,13 +243,13 @@ namespace myAISapi.Services
 						using (var scope = _scopeFactory.CreateScope())
 						{
 							var dbContext = scope.ServiceProvider.GetRequiredService<AppDBContext>();
-							await using var transaction = await dbContext.Database.BeginTransactionAsync();
+							await using var transaction = await dbContext.Database.BeginTransactionAsync(stoppingToken);
 
 							try
 							{
-								await BulkProcessRoutesAsync(batch, dbContext);
+								await BulkProcessRoutesAsync(batch, dbContext, stoppingToken);
 
-								await transaction.CommitAsync();
+								await transaction.CommitAsync(stoppingToken);
 
 								//Console.WriteLine($"Batch: {JsonSerializer.Serialize(batch)}");
 								//Console.WriteLine("Du lieu hanh trinh đa đuoc luu vao database.");
@@ -253,7 +258,7 @@ namespace myAISapi.Services
 							}
 							catch
 							{
-								await transaction.RollbackAsync();
+								await transaction.RollbackAsync(stoppingToken); 
 								throw;
 							}
 						}
@@ -266,93 +271,190 @@ namespace myAISapi.Services
 			}
 		}
 
-		private async Task BulkProcessRoutesAsync(List<DM_HanhTrinh> routes, AppDBContext context)
+		private async Task BulkProcessRoutesAsync(List<DM_HanhTrinh> routes, AppDBContext context, CancellationToken ct)
 		{
-			var mmsiList = routes.Select(r => r.MMSI).ToList();
-
+			if (!routes.Any())
+				return;
 			// Lấy danh sách MMSI đã tồn tại trong DM_Tau
+			
+
+			var mmsiList = routes
+				.Select(r => r.MMSI)
+				.Distinct()
+				.ToList();
+
 			var existingMmsis = await context.DM_Tau
 				.AsNoTracking()
 				.Where(t => mmsiList.Contains(t.MMSI))
 				.Select(t => t.MMSI)
 				.ToListAsync();
 
-			var tausToInsert = new List<DM_Tau>();
-			var hanhTrinhsToInsert = new List<DM_HanhTrinh>();
+			var shipsToInsert = new List<DM_Tau>();
 
-			// Xử lý các bản ghi
 			foreach (var route in routes)
 			{
-				if (route.Longitude == null || route.Latitude == null || route.CourseOverGround == null || route.TrueHeading == null || route.Longitude == 0 || route.Latitude == 0 || route.CourseOverGround == 0 || route.TrueHeading == 0)
-				{
-					// Lấy giá trị từ bản ghi mới nhất nếu các giá trị là NULL
-					var latestRoute = await context.QL_HanhTrinh
-						.AsNoTracking()
-						.Where(ht => ht.MMSI == route.MMSI)
-						.Where(ht => ht.Longitude != null && ht.Latitude != null && ht.Longitude != 0 && ht.Latitude != 0)
-						.OrderByDescending(ht => ht.DateTimeUTC)
-						.FirstOrDefaultAsync();
-
-					//Console.WriteLine($"latestRoute: {JsonSerializer.Serialize(latestRoute)}");
-
-					if (latestRoute == null)
-					{
-						continue;
-					}
-					if (route.Longitude == null || route.Longitude == 0)
-						route.Longitude = latestRoute.Longitude;
-					if (route.Latitude == null || route.Latitude == 0)
-						route.Latitude = latestRoute.Latitude;
-					if (route.CourseOverGround == null || route.CourseOverGround == 0)
-						route.CourseOverGround = latestRoute.CourseOverGround;
-					if (route.TrueHeading == null || route.TrueHeading == 0)
-						route.TrueHeading = latestRoute.TrueHeading;
-				}
 
 				if (!existingMmsis.Contains(route.MMSI))
 				{
-					// Only add to insert if it's not already in the context
-					if (!context.DM_Tau.Local.Any(t => t.MMSI == route.MMSI) && !tausToInsert.Any(t => t.MMSI == route.MMSI))
+					if (!context.DM_Tau.Local.Any(t => t.MMSI == route.MMSI) && !shipsToInsert.Any(t => t.MMSI == route.MMSI))
 					{
-						tausToInsert.Add(new DM_Tau { MMSI = route.MMSI });
+						shipsToInsert.Add(new DM_Tau 
+							{ 
+								MMSI = route.MMSI,
+								Longitude = route.Longitude,
+								Latitude = route.Latitude,
+								SpeedOverGround = route.SpeedOverGround,
+								CourseOverGround = route.CourseOverGround,
+								DateTimeUTC = route.DateTimeUTC
+							});
 					}
 				}
-				route.CreatedAt = DateTime.Now;
-				hanhTrinhsToInsert.Add(route);
-
 			}
 
-			if (hanhTrinhsToInsert.Any())
-			{
-				var dates = hanhTrinhsToInsert
-					.Where(r => r.DateTimeUTC.HasValue)
-					.Select(r => r.DateTimeUTC!.Value.Date)
-					.ToList();
+			var latestDynamicByMmsi = routes
+				.Where(r =>
+					r.MMSI != 0 &&
+					r.DateTimeUTC.HasValue &&
+					r.Longitude.HasValue && r.Latitude.HasValue &&
+					r.SpeedOverGround.HasValue && r.CourseOverGround.HasValue &&
+					r.Longitude.Value != 0 && r.Latitude.Value != 0)
+				.GroupBy(r => r.MMSI)
+				.ToDictionary(
+					g => g.Key,
+					g => g.OrderByDescending(x => x.DateTimeUTC!.Value).First()
+				);
 
-				if (dates.Count > 0)
+			var shipsToUpdate = await context.DM_Tau
+				.Where(t => mmsiList.Contains(t.MMSI))
+				.ToListAsync(ct);
+
+			foreach (var ship in shipsToUpdate)
+			{
+				if (latestDynamicByMmsi.TryGetValue(ship.MMSI, out var lastRoute))
 				{
-					await context.Database.ExecuteSqlRawAsync(
-						"EXEC dbo.usp_EnsurePartitionsForRange @p0, @p1",
-						dates.Min(), dates.Max());
+					ship.Longitude = lastRoute.Longitude;
+					ship.Latitude = lastRoute.Latitude;
+					ship.SpeedOverGround = lastRoute.SpeedOverGround;
+					ship.CourseOverGround = lastRoute.CourseOverGround;
+					ship.DateTimeUTC = lastRoute.DateTimeUTC.Value;
+					ship.MsgChannel = lastRoute.MsgChannel;
 				}
 			}
 
-			// Bulk Insert
-			if (tausToInsert.Any())
+
+			if (shipsToInsert.Any())
 			{
-				await context.BulkInsertAsync(tausToInsert, config =>
+				await context.BulkInsertAsync(shipsToInsert, config =>
 				{
 					config.BatchSize = 600;
 				});
 			}
 
-			if (hanhTrinhsToInsert.Any())
+			if (shipsToUpdate.Any())
 			{
-				await context.BulkInsertAsync(hanhTrinhsToInsert, config =>
+				await context.BulkUpdateAsync(shipsToUpdate, config =>
 				{
 					config.BatchSize = 600;
+					config.PropertiesToInclude = new List<string>
+			{
+				nameof(DM_Tau.Longitude),
+				nameof(DM_Tau.Latitude),
+				nameof(DM_Tau.SpeedOverGround),
+				nameof(DM_Tau.CourseOverGround),
+				nameof(DM_Tau.MsgChannel),
+				nameof(DM_Tau.DateTimeUTC)
+			};
 				});
 			}
+
+			await _cassandraHanhTrinhRepo.InsertBatchAsync(routes, ct);
+			//if (!routes.Any())
+			//	return;
+			//var mmsiList = routes.Select(r => r.MMSI).ToList();
+
+			//// Lấy danh sách MMSI đã tồn tại trong DM_Tau
+			//var existingMmsis = await context.DM_Tau
+			//	.AsNoTracking()
+			//	.Where(t => mmsiList.Contains(t.MMSI))
+			//	.Select(t => t.MMSI)
+			//	.ToListAsync();
+
+			//var tausToInsert = new List<DM_Tau>();
+			//var hanhTrinhsToInsert = new List<DM_HanhTrinh>();
+
+			//// Xử lý các bản ghi
+			//foreach (var route in routes)
+			//{
+			//	if (route.Longitude == null || route.Latitude == null || route.CourseOverGround == null || route.TrueHeading == null || route.Longitude == 0 || route.Latitude == 0 || route.CourseOverGround == 0 || route.TrueHeading == 0)
+			//	{
+			//		// Lấy giá trị từ bản ghi mới nhất nếu các giá trị là NULL
+			//		var latestRoute = await context.QL_HanhTrinh
+			//			.AsNoTracking()
+			//			.Where(ht => ht.MMSI == route.MMSI)
+			//			.Where(ht => ht.Longitude != null && ht.Latitude != null && ht.Longitude != 0 && ht.Latitude != 0)
+			//			.OrderByDescending(ht => ht.DateTimeUTC)
+			//			.FirstOrDefaultAsync();
+
+			//		//Console.WriteLine($"latestRoute: {JsonSerializer.Serialize(latestRoute)}");
+
+			//		if (latestRoute == null)
+			//		{
+			//			continue;
+			//		}
+			//		if (route.Longitude == null || route.Longitude == 0)
+			//			route.Longitude = latestRoute.Longitude;
+			//		if (route.Latitude == null || route.Latitude == 0)
+			//			route.Latitude = latestRoute.Latitude;
+			//		if (route.CourseOverGround == null || route.CourseOverGround == 0)
+			//			route.CourseOverGround = latestRoute.CourseOverGround;
+			//		if (route.TrueHeading == null || route.TrueHeading == 0)
+			//			route.TrueHeading = latestRoute.TrueHeading;
+			//	}
+
+			//	if (!existingMmsis.Contains(route.MMSI))
+			//	{
+			//		// Only add to insert if it's not already in the context
+			//		if (!context.DM_Tau.Local.Any(t => t.MMSI == route.MMSI) && !tausToInsert.Any(t => t.MMSI == route.MMSI))
+			//		{
+			//			tausToInsert.Add(new DM_Tau { MMSI = route.MMSI });
+			//		}
+			//	}
+			//	route.CreatedAt = DateTime.Now;
+			//	hanhTrinhsToInsert.Add(route);
+
+			//}
+
+			//if (hanhTrinhsToInsert.Any())
+			//{
+			//	var dates = hanhTrinhsToInsert
+			//		.Where(r => r.DateTimeUTC.HasValue)
+			//		.Select(r => r.DateTimeUTC!.Value.Date)
+			//		.ToList();
+
+			//	if (dates.Count > 0)
+			//	{
+			//		await context.Database.ExecuteSqlRawAsync(
+			//			"EXEC dbo.usp_EnsurePartitionsForRange @p0, @p1",
+			//			dates.Min(), dates.Max());
+			//	}
+			//}
+
+			//// Bulk Insert
+			//if (tausToInsert.Any())
+			//{
+			//	await context.BulkInsertAsync(tausToInsert, config =>
+			//	{
+			//		config.BatchSize = 600;
+			//	});
+			//}
+
+			//if (hanhTrinhsToInsert.Any())
+			//{
+			//	await context.BulkInsertAsync(hanhTrinhsToInsert, config =>
+			//	{
+			//		config.BatchSize = 600;
+			//	});
+			//}
 
 
 		}

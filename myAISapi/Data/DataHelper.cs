@@ -5,7 +5,7 @@ namespace myAISapi.Data
 {
 	public class DataHelper
 	{
-		public static object Ship(DecodedAISMessage message)
+		public static object Ship(DecodedAISMessage message, string channel)
 		{
 			try
 			{
@@ -37,7 +37,8 @@ namespace myAISapi.Data
 					Destination = message.Destination,
 					AidType = message.AidType,
 					VirtualAidFlag = message.VirtualAidFlag,
-					OffPositionIndicator = message.OffPositionIndicator
+					OffPositionIndicator = message.OffPositionIndicator,
+					MsgChannel = channel
 				};
 				return tau;
 			}
@@ -50,7 +51,7 @@ namespace myAISapi.Data
 
 		}
 
-		public static object Route(DecodedAISMessage message)
+		public static object Route(DecodedAISMessage message, string channel)
 		{
 			int ETAyear = message.ETAMonth > DateTime.Now.Month ? DateTime.Now.Year : DateTime.Now.Year + 1;
 			try
@@ -98,6 +99,7 @@ namespace myAISapi.Data
 					DisplayFlag = message.DisplayFlag,
 					ETADateTime = dtETA,
 					DSCFlag = message.DSCFlag,
+					MsgChannel = channel
 				};
 				return hanhtrinh;
 			}

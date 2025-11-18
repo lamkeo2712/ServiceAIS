@@ -128,3 +128,8 @@ D:\Study\Git\ServiceAIS\ServiceAIS\myAISapi\bin\Debug\net8.0\publish\appsettings
 D:\Study\Git\ServiceAIS\ServiceAIS\myAISapi\bin\Debug\net8.0\publish\appsettings.json
 D:\Study\Git\ServiceAIS\ServiceAIS\myAISapi\bin\Debug\net8.0\publish\myAISapi.deps.json
 D:\Study\Git\ServiceAIS\ServiceAIS\myAISapi\bin\Debug\net8.0\publish\myAISapi.runtimeconfig.json
+D:\Study\Git\ServiceAIS\ServiceAIS\myAISapi\bin\Debug\net8.0\Cassandra.dll
+D:\Study\Git\ServiceAIS\ServiceAIS\myAISapi\bin\Debug\net8.0\K4os.Compression.LZ4.dll
+D:\Study\Git\ServiceAIS\ServiceAIS\myAISapi\bin\Debug\net8.0\System.CodeDom.dll
+D:\Study\Git\ServiceAIS\ServiceAIS\myAISapi\bin\Debug\net8.0\System.Management.dll
+D:\Study\Git\ServiceAIS\ServiceAIS\myAISapi\bin\Debug\net8.0\runtimes\win\lib\netcoreapp2.0\System.Management.dll

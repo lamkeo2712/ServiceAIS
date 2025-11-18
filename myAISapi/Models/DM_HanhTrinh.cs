@@ -25,5 +25,6 @@ namespace myAISapi.Models
 		public bool? DSCFlag { get; set; }
 		public DateTime? ETADateTime { get; set; }
 		public DateTime? CreatedAt { get; set; }
+		public string? MsgChannel { get; set; }
 	}
 }
