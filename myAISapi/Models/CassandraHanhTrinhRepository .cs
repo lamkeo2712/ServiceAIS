@@ -12,34 +12,32 @@ public class CassandraHanhTrinhRepository : ICassandraHanhTrinhRepository
 		_session = session;
 
 		_selectByMmsiDayStmt = _session.Prepare(@"
-            SELECT MaHanhTrinh,
-                   MMSI,
-                   MessageType,
-                   NavigationStatus,
-                   RateOfTurn,
-                   SpeedOverGround,
-                   PositionAccuracy,
-                   Longitude,
-                   Latitude,
-                   CourseOverGround,
-                   TrueHeading,
-                   TimeStamp,
-                   ManeuverIndicator,
-                   RAIMFlags,
-                   PositionFixType,
-                   StationType,
-                   ReportInterval,
-                   ETADateTime,
-                   DisplayFlag,
-                   DSCFlag,
-                   CreatedAt,
-                   DateTimeUTC,
-                   day
-            FROM QL_HanhTrinh
-            WHERE MMSI = ? AND day = ?
-              AND DateTimeUTC >= ?
-              AND DateTimeUTC <= ?;
-        ");
+			SELECT MaHanhTrinh,
+				   MMSI,
+				   MessageType,
+				   NavigationStatus,
+				   RateOfTurn,
+				   SpeedOverGround,
+				   PositionAccuracy,
+				   Longitude,
+				   Latitude,
+				   CourseOverGround,
+				   TrueHeading,
+				   TimeStamp,
+				   ManeuverIndicator,
+				   RAIMFlags,
+				   PositionFixType,
+				   StationType,
+				   ReportInterval,
+				   ETADateTime,
+				   DisplayFlag,
+				   DSCFlag,
+				   CreatedAt,
+				   DateTimeUTC,
+				   day
+			FROM QL_HanhTrinh
+			WHERE MMSI = ? AND day = ?;
+		");
 
 		_insertStmt = _session.Prepare(@"
             INSERT INTO QL_HanhTrinh (
@@ -126,11 +124,11 @@ public class CassandraHanhTrinhRepository : ICassandraHanhTrinhRepository
 	}
 
 	public async Task<IReadOnlyList<DM_HanhTrinh>> GetHanhTrinhAsync(
-		int mmsi,
-		int hours,
-		CancellationToken ct = default)
+	int mmsi,
+	int hours,
+	CancellationToken ct = default)
 	{
-		var nowUtc = DateTime.UtcNow;
+		var nowUtc = DateTime.Now;
 		var startUtc = nowUtc.AddHours(-hours);
 
 		var result = new List<DM_HanhTrinh>();
@@ -141,34 +139,46 @@ public class CassandraHanhTrinhRepository : ICassandraHanhTrinhRepository
 
 		while (currentDate <= lastDate)
 		{
-			if (ct.IsCancellationRequested) break;
+			if (ct.IsCancellationRequested)
+				break;
 
 			// LocalDate cho partition key "day"
 			var localDate = new LocalDate(currentDate.Year, currentDate.Month, currentDate.Day);
 
-			// Với ngày đầu & ngày cuối, ta phải clamp khoảng thời gian
-			var dayStartUtc = currentDate == startUtc.Date
-				? startUtc
-				: new DateTime(currentDate.Year, currentDate.Month, currentDate.Day, 0, 0, 0, DateTimeKind.Utc);
-
-			var dayEndUtc = currentDate == lastDate
-				? nowUtc
-				: new DateTime(currentDate.Year, currentDate.Month, currentDate.Day, 23, 59, 59, DateTimeKind.Utc);
-
-			var bound = _selectByMmsiDayStmt.Bind(mmsi, localDate, dayStartUtc, dayEndUtc);
+			// Query TẤT CẢ record của ngày đó cho MMSI (không filter DateTimeUTC ở CQL nữa)
+			var bound = _selectByMmsiDayStmt.Bind(mmsi, localDate);
 			var rs = await _session.ExecuteAsync(bound).ConfigureAwait(false);
 
 			foreach (var row in rs)
 			{
-				result.Add(MappingHanhTrinh(row));
+				var ht = MappingHanhTrinh(row);
+
+				// Đảm bảo DateTimeUTC được coi là UTC
+				if (ht.DateTimeUTC.HasValue)
+				{
+					var dtUtc = DateTime.SpecifyKind(ht.DateTimeUTC.Value, DateTimeKind.Utc);
+
+					// Lọc theo khoảng giờ [startUtc, nowUtc]
+					if (dtUtc < startUtc || dtUtc > nowUtc)
+						continue;
+
+					// Lọc rác: lat/lon null hoặc = 0
+					if (!ht.Latitude.HasValue || ht.Latitude.Value == 0 ||
+						!ht.Longitude.HasValue || ht.Longitude.Value == 0)
+						continue;
+
+					ht.DateTimeUTC = dtUtc; // gán lại cho chắc
+
+					result.Add(ht);
+				}
 			}
 
 			currentDate = currentDate.AddDays(1);
 		}
 
-		// Cassandra sort DateTimeUTC DESC, nếu bạn cần ASC giống proc cũ thì sort lại
+		// Sắp xếp tăng dần giống proc SQL cũ
 		return result
-			.OrderBy(r => r.DateTimeUTC)
+			.OrderBy(r => r.DateTimeUTC ?? DateTime.MinValue)
 			.ToList();
 	}
 
