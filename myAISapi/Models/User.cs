@@ -19,5 +19,8 @@ namespace myAISapi.Models
 		public string? RefreshToken { get; set; }
 
 		public DateTime? RefreshTokenExpiryTime { get; set; }
+		public string? PlanType { get; set; } = "Free";
+		public DateTime? PlanExpiredAt { get; set; }
 	}
+
 }

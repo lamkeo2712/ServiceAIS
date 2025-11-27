@@ -13,6 +13,7 @@ using myAISapi.Models;
 using System.Linq;
 using myAISapi.Decoder;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authorization;
 
 namespace myAISapi.Controllers
 {
@@ -38,6 +39,8 @@ namespace myAISapi.Controllers
 				Username = user.Username,
 				PasswordHash = hashedPassword,
 				Role = "Guest",
+				PlanType = "Free",
+				PlanExpiredAt = null
 			});
 
 			try
@@ -60,12 +63,22 @@ namespace myAISapi.Controllers
 			{
 				return Unauthorized();
 			}
+
+			if (user.PlanType == "Pro" && user.PlanExpiredAt.HasValue &&
+				user.PlanExpiredAt.Value <= DateTime.UtcNow)
+			{
+				user.PlanType = "Free";
+				user.PlanExpiredAt = null;
+				_context.SaveChanges();
+			}
+
 			// Tạo claims
 			var claims = new[] {
 				new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
 				new Claim(ClaimTypes.Name, user.Username),
-				new Claim(ClaimTypes.Role, user.Role), // Lấy role từ database
-            };
+				new Claim(ClaimTypes.Role, user.Role),
+				new Claim("PlanType", user.PlanType ?? "Free")
+			};
 			// Tạo JWT token
 			var accessToken = GenerateJwtToken(claims);
 			var refreshToken = GenerateRefreshToken();
@@ -106,11 +119,20 @@ namespace myAISapi.Controllers
 				return BadRequest("Invalid refresh token");
 			}
 
+			if (user.PlanType == "Pro" && user.PlanExpiredAt.HasValue &&
+				user.PlanExpiredAt.Value <= DateTime.UtcNow)
+			{
+				user.PlanType = "Free";
+				user.PlanExpiredAt = null;
+				_context.SaveChanges();
+			}
+
 			// Tạo access token mới
 			var claims = new[] {
 				new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
 				new Claim(ClaimTypes.Name, user.Username),
 				new Claim(ClaimTypes.Role, user.Role),
+				new Claim("PlanType", user.PlanType ?? "Free")
 			};
 			var newAccessToken = GenerateJwtToken(claims);
 
@@ -162,15 +184,44 @@ namespace myAISapi.Controllers
 			var userId = HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
 			var username = HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value;
 			var role = HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value;
+			var planType = HttpContext.User.Claims.FirstOrDefault(c => c.Type == "PlanType")?.Value;
 
 			var user = new
 			{
 				UserId = userId,
 				Username = username,
-				Role = role
+				Role = role,
+				PlanType = planType
 			};
 
 			return Ok(user);
+		}
+
+		[HttpPost("UpgradeToPro")]
+		[Authorize]
+		public async Task<IActionResult> UpgradeToPro([FromBody] int months = 1)
+		{
+			var userIdStr = HttpContext.User.Claims
+				.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+
+			if (!int.TryParse(userIdStr, out var userId))
+				return Unauthorized();
+
+			var user = _context.Users.FirstOrDefault(u => u.Id == userId);
+			if (user == null) return NotFound("User not found");
+
+			user.PlanType = "Pro";
+			user.PlanExpiredAt = DateTime.UtcNow.AddMonths(months <= 0 ? 1 : months);
+
+			var rows = await _context.SaveChangesAsync();
+
+			return Ok(new
+			{
+				message = "Đã nâng cấp tài khoản của bạn lên Pro.",
+				user.PlanType,
+				user.PlanExpiredAt,
+				rows
+			});
 		}
 
 	}

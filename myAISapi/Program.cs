@@ -76,6 +76,8 @@ builder.Services.AddAuthorization(options =>
 { 
 	options.AddPolicy("AdminOnly", policy => policy.RequireRole("Admin"));
 	options.AddPolicy("Admin&Guest", policy => policy.RequireRole("Guest,Admin"));
+	options.AddPolicy("PaidUserOnly", policy =>
+		policy.RequireClaim("PlanType", "Pro"));
 });
 
 
