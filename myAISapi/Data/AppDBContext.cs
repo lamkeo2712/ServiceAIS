@@ -19,41 +19,49 @@ namespace myAISapi.Data
 				throw new InvalidOperationException("Database connection is null.");
 			}
 
-			using (var connection = dbConnection as SqlConnection ?? new SqlConnection(dbConnection.ConnectionString))
+			// EF chịu trách nhiệm tạo connection với đúng ConnectionString
+			if (dbConnection.State != ConnectionState.Open)
 			{
-				await connection.OpenAsync();
-				using (var command = new SqlCommand(procedureName, connection))
+				await dbConnection.OpenAsync();
+			}
+
+			// Chắc chắn kiểu là SqlConnection nếu dùng UseSqlServer
+			if (dbConnection is not SqlConnection sqlConnection)
+			{
+				throw new InvalidOperationException("Database connection is not SqlConnection.");
+			}
+
+			using (var command = new SqlCommand(procedureName, sqlConnection))
+			{
+				command.CommandType = CommandType.StoredProcedure;
+				command.Parameters.AddWithValue("@ThamSo", jsonParams ?? (object)DBNull.Value);
+				command.Parameters.AddWithValue("@UserRequest", userRequest ?? (object)DBNull.Value);
+
+				using (var adapter = new SqlDataAdapter(command))
 				{
-					command.CommandType = CommandType.StoredProcedure;
-					command.Parameters.AddWithValue("@ThamSo", jsonParams);
-					command.Parameters.AddWithValue("@UserRequest", userRequest);
+					var ds = new DataSet();
+					adapter.Fill(ds);
 
-					using (var adapter = new SqlDataAdapter(command))
+					if (ds.Tables.Count > 0)
 					{
-						var ds = new DataSet();
-						adapter.Fill(ds);
-
-						if (ds.Tables.Count > 0)
+						DataTable dtName = ds.Tables[0]; // chứa danh sách tên dữ liệu trả về
+						if (dtName.Columns.Contains("DataName"))
 						{
-							DataTable dtName = ds.Tables[0]; // chứa danh sách tên dữ liệu trả về
-							if (dtName.Columns.Contains("DataName"))
+							dtName.TableName = "DataNames";
+							for (int i = 1; i < ds.Tables.Count; i++)
 							{
-								dtName.TableName = "DataNames";
-								for (int i = 1; i < ds.Tables.Count; i++)
+								DataTable dt = ds.Tables[i];
+								if (i - 1 < dtName.Rows.Count)
 								{
-									DataTable dt = ds.Tables[i];
-									if (i - 1 < dtName.Rows.Count)
-									{
-										dt.TableName = dtName.Rows[i - 1]["DataName"].ToString();
-									}
+									dt.TableName = dtName.Rows[i - 1]["DataName"].ToString();
 								}
-								ds.Tables.Remove(dtName);
-								ds.Tables.Add(dtName);
 							}
+							ds.Tables.Remove(dtName);
+							ds.Tables.Add(dtName);
 						}
-
-						return ToJsonObject(ds);
 					}
+
+					return ToJsonObject(ds);
 				}
 			}
 		}
@@ -81,6 +89,15 @@ namespace myAISapi.Data
 			return result; // Trả về dictionary có thể serialize thành JSON
 		}
 
+		protected override void OnModelCreating(ModelBuilder modelBuilder)
+		{
+			base.OnModelCreating(modelBuilder);
+
+			modelBuilder.Entity<BeaconRef>()
+				.HasIndex(b => b.MMSI)
+				.IsUnique();
+		}
+
 		public DbSet<User> Users { get; set; }
 
 		public DbSet<DM_Tau> DM_Tau { get; set; }
@@ -88,6 +105,7 @@ namespace myAISapi.Data
 		public DbSet<DM_Tau_HS> DM_Tau_HS { get; set; }
 
 		public DbSet<DM_HanhTrinh> QL_HanhTrinh { get; set; }
+		public DbSet<BeaconRef> DM_BeaconRef { get; set; }
 
 	}
 }

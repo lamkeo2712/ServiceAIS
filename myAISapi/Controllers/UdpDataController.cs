@@ -46,7 +46,7 @@ namespace myAISapi.Controllers
 			return Ok(_shipStore.GetAllShip());
 		}
 		[HttpGet("hanhtrinh")]
-		[Authorize(Policy = "Admin&Guest")]
+		[Authorize(Policy = "AdminOnly")]
 		public IActionResult GetRoute()
 		{
 			return Ok(_routeStore.GetAllRoute());

@@ -80,10 +80,6 @@ builder.Services.AddAuthorization(options =>
 		policy.RequireClaim("PlanType", "Pro"));
 });
 
-
-
-
-
 // Con trôn lơ
 builder.Services.AddControllers().AddJsonOptions(options =>
 {
@@ -92,6 +88,8 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 	//options.JsonSerializerOptions.Converters.Add(new NullConverter<object>());
 	options.JsonSerializerOptions.WriteIndented = true; // Giúp JSON dễ đọc
 });
+
+builder.Services.AddSignalR();
 
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -103,12 +101,29 @@ builder.Services.AddSingleton<IDecodedAISStore, DecodedAISStore>();
 builder.Services.AddSingleton<IDM_HanhTrinh_Store, DM_HanhTrinh_Store>();
 builder.Services.AddSingleton<IDM_Tau_Store, DM_Tau_Store>();
 builder.Services.AddSingleton<UdpListenerService>();
+builder.Services.AddScoped<myAISapi.Services.IAlertService, myAISapi.Services.AlertService>();
+builder.Services.AddScoped<BeaconDriftService>();
 
 
 builder.Services.AddHostedService<UdpListenerService>(provider => provider.GetRequiredService<UdpListenerService>());
 builder.Services.AddHostedService<AisDecoderHostedService>();
 builder.Services.AddHostedService<AisDBService>();
-//builder.Services.AddSingleton<AisDecoderService>();
+builder.Services.AddHostedService<BeaconDriftHostedService>();
+
+//builder.Services.AddCors(options =>
+//{
+//	options.AddPolicy("AllowFrontend", policy =>
+//	{
+//		policy
+//			.WithOrigins(
+//				"http://localhost:5173",
+//				"http://localhost:3030"
+//			)
+//			.AllowAnyHeader()
+//			.AllowAnyMethod()
+//			.AllowCredentials(); // ⚠️ cần cho SignalR + cookie/token
+//	});
+//});
 
 builder.Services.AddCors(options =>
 {
@@ -117,7 +132,8 @@ builder.Services.AddCors(options =>
 		{
 			policy.WithOrigins(builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>()) // Thay đổi URL nếu React chạy trên domain khác
 				  .AllowAnyMethod()
-				  .AllowAnyHeader();
+				  .AllowAnyHeader()
+				  .AllowCredentials();
 		});
 });
 
@@ -172,6 +188,8 @@ app.UseAuthentication();
 
 app.UseAuthorization();
 
-app.MapControllers();
+app.MapControllers(); 
+
+app.MapHub<myAISapi.Hubs.NotifyHub>("/notifyHub");
 
 app.Run();

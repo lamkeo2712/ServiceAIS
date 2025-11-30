@@ -224,5 +224,97 @@ namespace myAISapi.Controllers
 			});
 		}
 
+		[Authorize]
+		[HttpPost("User/Edit")]
+		public async Task<IActionResult> UpdateProfile([FromBody] UserEdit model)
+		{
+			try
+			{
+				var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+				if (string.IsNullOrEmpty(userIdClaim))
+					return Unauthorized("Không tìm thấy thông tin user trong token");
+				if (!int.TryParse(userIdClaim, out var userId))
+					return Unauthorized("UserId trong token không hợp lệ");
+
+				var user = await _context.Users.FindAsync(userId);
+				if (user == null)
+					return NotFound("Không tìm thấy user");
+
+				if (!string.IsNullOrWhiteSpace(model.HoTen))
+					user.HoTen = model.HoTen;
+				if (!string.IsNullOrWhiteSpace(model.Email))
+					user.Email = model.Email;
+				if (!string.IsNullOrWhiteSpace(model.DienThoai))
+					user.DienThoai = model.DienThoai;
+
+				await _context.SaveChangesAsync();
+
+				return Ok(new
+				{
+					user.Id,
+					user.Username,
+					user.HoTen,
+					user.Email,
+					user.DienThoai,
+					user.Role,
+					user.PlanType
+				});
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(500, $"Lỗi khi cập nhật hồ sơ: {ex.Message}");
+			}
+		}
+
+		[Authorize]
+		[HttpPost("User/updatePwd")]
+		public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordRequestModel model)
+		{
+			if (string.IsNullOrWhiteSpace(model.CurrentPassword) ||
+				string.IsNullOrWhiteSpace(model.NewPassword))
+			{
+				return BadRequest("Mật khẩu hiện tại và mật khẩu mới không được để trống");
+			}
+
+			try
+			{
+				var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+				if (string.IsNullOrEmpty(userIdClaim))
+				{
+					return Unauthorized("Không tìm thấy thông tin user trong token");
+				}
+
+				if (!int.TryParse(userIdClaim, out var userId))
+				{
+					return Unauthorized("UserId trong token không hợp lệ");
+				}
+
+				var user = await _context.Users.FindAsync(userId);
+				if (user == null)
+				{
+					return NotFound("Không tìm thấy user");
+				}
+
+				if (!PasswordHasher.VerifyPassword(model.CurrentPassword, user.PasswordHash))
+				{
+					return BadRequest("Mật khẩu hiện tại không đúng");
+				}
+
+				var newHash = PasswordHasher.HashPassword(model.NewPassword);
+				user.PasswordHash = newHash;
+
+				user.RefreshToken = null;
+				user.RefreshTokenExpiryTime = DateTime.UtcNow;
+
+				await _context.SaveChangesAsync();
+
+				return Ok("Đổi mật khẩu thành công. Vui lòng đăng nhập lại.");
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(500, $"Lỗi khi đổi mật khẩu: {ex.Message}");
+			}
+		}
+
 	}
 }

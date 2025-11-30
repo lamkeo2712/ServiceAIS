@@ -133,3 +133,7 @@ D:\Study\Git\ServiceAIS\ServiceAIS\myAISapi\bin\Debug\net8.0\K4os.Compression.LZ
 D:\Study\Git\ServiceAIS\ServiceAIS\myAISapi\bin\Debug\net8.0\System.CodeDom.dll
 D:\Study\Git\ServiceAIS\ServiceAIS\myAISapi\bin\Debug\net8.0\System.Management.dll
 D:\Study\Git\ServiceAIS\ServiceAIS\myAISapi\bin\Debug\net8.0\runtimes\win\lib\netcoreapp2.0\System.Management.dll
+D:\Study\Git\ServiceAIS\ServiceAIS\myAISapi\bin\Debug\net8.0\Microsoft.Extensions.Diagnostics.Abstractions.dll
+D:\Study\Git\ServiceAIS\ServiceAIS\myAISapi\bin\Debug\net8.0\Microsoft.Extensions.Hosting.Abstractions.dll
+D:\Study\Git\ServiceAIS\ServiceAIS\myAISapi\bin\Debug\net8.0\Microsoft.Extensions.ObjectPool.dll
+D:\Study\Git\ServiceAIS\ServiceAIS\myAISapi\bin\Debug\net8.0\System.Net.WebSockets.WebSocketProtocol.dll

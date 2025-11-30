@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using myAISapi.Data;
 using myAISapi.Models;
+using myAISapi.Services;
 using Newtonsoft.Json;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -16,11 +17,13 @@ namespace myAISapi.Controllers
 	{
 		private readonly ICassandraHanhTrinhRepository _repo;
 		private readonly AppDBContext _context;
+		private readonly IAlertService _alertService;
 
-		public ShipController(AppDBContext context, ICassandraHanhTrinhRepository repo)
+		public ShipController(AppDBContext context, ICassandraHanhTrinhRepository repo, IAlertService alertService)
 		{
 			_context = context;
 			_repo = repo;
+			_alertService = alertService;
 		}
 
 		//[HttpPost]
@@ -210,6 +213,34 @@ namespace myAISapi.Controllers
 				request.ThamSo,
 				HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value ?? "test"
 			);
+		}
+
+		[HttpPost("broadcast")]
+		public async Task<IActionResult> BroadcastTestAlert()
+		{
+			var alert = new
+			{
+				Type = "Test",
+				Message = "Có thông báo test từ server",
+				Time = DateTime.UtcNow
+			};
+
+			await _alertService.PushBroadcastAsync(alert);
+			return Ok("Đã gửi alert");
+		}
+
+		[HttpPost("user/{userId}")]
+		public async Task<IActionResult> AlertUser(string userId)
+		{
+			var alert = new
+			{
+				Type = "UserAlert",
+				Message = "Thông báo riêng cho user " + userId,
+				Time = DateTime.UtcNow
+			};
+
+			await _alertService.PushToUserAsync(userId, alert);
+			return Ok("Đã gửi alert cho user");
 		}
 	}
 
