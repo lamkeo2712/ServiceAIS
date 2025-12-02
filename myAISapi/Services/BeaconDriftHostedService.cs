@@ -23,7 +23,6 @@ namespace myAISapi.Services
 					var svc = scope.ServiceProvider.GetRequiredService<BeaconDriftService>();
 
 					await svc.ScanAllBeaconsAsync();
-					//_logger.LogInformation("scanning beacon drift done");
 				}
 				catch (Exception ex)
 				{

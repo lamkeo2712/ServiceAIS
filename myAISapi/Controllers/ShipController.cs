@@ -99,7 +99,6 @@ namespace myAISapi.Controllers
 				return BadRequest("Invalid request.");
 			}
 
-			// Gọi phương thức từ instance của AppDBContext
 			return await _context.ExecuteProcedureAsync(
 				"Proc_DM_Tau_TD_Search",
 				request.ThamSo,
@@ -117,7 +116,6 @@ namespace myAISapi.Controllers
 				return BadRequest("Invalid request.");
 			}
 
-			// Gọi phương thức từ instance của AppDBContext
 			return await _context.ExecuteProcedureAsync(
 				"Proc_DM_Tau_TD_Update",
 				request.ThamSo,
@@ -135,7 +133,6 @@ namespace myAISapi.Controllers
 				return BadRequest("Invalid request.");
 			}
 
-			// Gọi phương thức từ instance của AppDBContext
 			return await _context.ExecuteProcedureAsync(
 				"Proc_DM_Tau_TD_Delete",
 				request.ThamSo,
@@ -153,7 +150,6 @@ namespace myAISapi.Controllers
 				return BadRequest("Invalid request.");
 			}
 
-			// Gọi phương thức từ instance của AppDBContext
 			return await _context.ExecuteProcedureAsync(
 				"Proc_DM_Vung_Search",
 				request.ThamSo,
@@ -171,7 +167,6 @@ namespace myAISapi.Controllers
 				return BadRequest("Invalid request.");
 			}
 
-			// Gọi phương thức từ instance của AppDBContext
 			return await _context.ExecuteProcedureAsync(
 				"Proc_DM_Vung_Update",
 				request.ThamSo,
@@ -189,7 +184,6 @@ namespace myAISapi.Controllers
 				return BadRequest("Invalid request.");
 			}
 
-			// Gọi phương thức từ instance của AppDBContext
 			return await _context.ExecuteProcedureAsync(
 				"Proc_DM_Vung_Delete",
 				request.ThamSo,
@@ -207,7 +201,6 @@ namespace myAISapi.Controllers
 				return BadRequest("Invalid request.");
 			}
 
-			// Gọi phương thức từ instance của AppDBContext
 			return await _context.ExecuteProcedureAsync(
 				"Proc_DM_Tau_Polygon_Search",
 				request.ThamSo,

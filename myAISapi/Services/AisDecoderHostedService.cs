@@ -11,7 +11,6 @@ using System.Threading.Channels;
 
 namespace myAISapi.Services
 {
-	// Kế thừa từ BackgroundService (Không cần IHostedService nữa)
 	public class AisDecoderHostedService : BackgroundService
 	{
 		private readonly ILogger<AisDecoderHostedService> _logger;
@@ -39,17 +38,16 @@ namespace myAISapi.Services
 			_udpListenerService = udpListenerService;
 		}
 
-		// Thực hiện xử lý chạy nền tại đây
 		protected override async Task ExecuteAsync(CancellationToken stoppingToken)
 		{
 			_logger.LogInformation("AIS Decoder Hosted Service is running.");
 
-			var messageQueue = _udpListenerService.GetMessageQueue();//.GetConsumingEnumerable(stoppingToken);
+			var messageQueue = _udpListenerService.GetMessageQueue();
 
 			await Parallel.ForEachAsync(messageQueue.GetConsumingEnumerable(stoppingToken),
 				new ParallelOptions { MaxDegreeOfParallelism = Environment.ProcessorCount }, // Giới hạn số lượng task song song
-				async (msg, ct) => // ct là CancellationToken
-								   //foreach (var msg in messageQueue)
+				async (msg, ct) => 
+								   
 			{
 				try
 				{

@@ -11,7 +11,6 @@ namespace myAISapi.Services
 		{
 			_ship.AddOrUpdate(message.MMSI, message, (key, existingShip) =>
 			{
-				// Cập nhật thông tin nếu MMSI đã tồn tại
 				existingShip = message;
 				return existingShip;
 			});

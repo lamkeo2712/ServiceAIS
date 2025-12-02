@@ -21,9 +21,9 @@ namespace myAISapi.Controllers
 	[ApiController]
 	public class AuthenController : ControllerBase
 	{
-		private readonly AppDBContext _context; // Inject DbContext
+		private readonly AppDBContext _context;
 
-		public AuthenController(AppDBContext context) // Thêm DbContext vào constructor
+		public AuthenController(AppDBContext context)
 		{
 			_context = context;
 		}
@@ -31,7 +31,6 @@ namespace myAISapi.Controllers
 		[HttpPost("signin")]
 		public IActionResult Signin([FromBody] UserRequestModel user)
 		{
-			// Xác thực người dùng
 			string hashedPassword = PasswordHasher.HashPassword(user.Password);
 
 			_context.Users.Add(new User
@@ -57,7 +56,6 @@ namespace myAISapi.Controllers
 		[HttpPost("login")]
 		public IActionResult Login([FromBody] UserRequestModel userRequestModel)
 		{
-			// Xác thực người dùng
 			var user = AuthenticateUser(userRequestModel.Username, userRequestModel.Password);
 			if (user == null)
 			{
@@ -72,17 +70,14 @@ namespace myAISapi.Controllers
 				_context.SaveChanges();
 			}
 
-			// Tạo claims
 			var claims = new[] {
 				new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
 				new Claim(ClaimTypes.Name, user.Username),
 				new Claim(ClaimTypes.Role, user.Role),
 				new Claim("PlanType", user.PlanType ?? "Free")
 			};
-			// Tạo JWT token
 			var accessToken = GenerateJwtToken(claims);
 			var refreshToken = GenerateRefreshToken();
-			// Lưu refresh token vào database
 			user.RefreshToken = refreshToken;
 			user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(7);
 			_context.SaveChanges();
@@ -91,16 +86,13 @@ namespace myAISapi.Controllers
 		}
 		private User AuthenticateUser(string username, string password)
 		{
-			// Tìm người dùng trong database
 			var user = _context.Users.FirstOrDefault(u => u.Username == username);
 
-			// Kiểm tra xem người dùng có tồn tại không
 			if (user == null || user.Username == null)
 			{
 				return null;
 			}
 
-			// TODO: Kiểm tra password (sử dụng hash và salt)
 			if (!PasswordHasher.VerifyPassword(password, user.PasswordHash))
 			{
 				return null;
@@ -127,7 +119,6 @@ namespace myAISapi.Controllers
 				_context.SaveChanges();
 			}
 
-			// Tạo access token mới
 			var claims = new[] {
 				new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
 				new Claim(ClaimTypes.Name, user.Username),
@@ -162,8 +153,8 @@ namespace myAISapi.Controllers
 				Subject = new ClaimsIdentity(claims),
 				Expires = DateTime.UtcNow.AddHours(1), // Thời gian hết hạn
 				SigningCredentials = signingCredentials,
-				Issuer = "http://localhost:5013", // Thay bằng issuer của bạn
-				Audience = "http://localhost:3030" // Thay bằng audience của bạn
+				Issuer = "http://localhost:5013",
+				Audience = "http://localhost:3030"
 			};
 
 			var tokenHandler = new JwtSecurityTokenHandler();
@@ -175,7 +166,7 @@ namespace myAISapi.Controllers
 		[HttpGet("forbidden")]
 		public IActionResult GetForbidden()
 		{
-			return Forbid(); // Sử dụng ForbidResult
+			return Forbid();
 		}
 
 		[HttpGet("GetUser")]

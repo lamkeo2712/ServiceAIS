@@ -6,14 +6,11 @@ namespace myAISapi.Decoder
 {
 	public class SharedFunction
 	{
-		//---------------------- Parse Data ----------------------
 
 		public static string charTo6Bit(char @char)
 		{
-			// Bảng chuyển đổi ký tự AIS sang 6 bit
 			const string aisChars = "0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVW`abcdefghijklmnopqrstuvw";
 
-			// Tìm vị trí của ký tự trong bảng AIS
 			int index = aisChars.IndexOf(@char);
 
 			if (index == -1)
@@ -21,7 +18,6 @@ namespace myAISapi.Decoder
 				throw new ArgumentException($"Ký tự không hợp lệ: {@char}");
 			}
 
-			// Chuyển đổi sang nhị phân 6 bit
 			return Convert.ToString(index, 2).PadLeft(6, '0');
 		}
 

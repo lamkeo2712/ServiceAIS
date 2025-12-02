@@ -19,13 +19,11 @@ namespace myAISapi.Data
 				throw new InvalidOperationException("Database connection is null.");
 			}
 
-			// EF chịu trách nhiệm tạo connection với đúng ConnectionString
 			if (dbConnection.State != ConnectionState.Open)
 			{
 				await dbConnection.OpenAsync();
 			}
 
-			// Chắc chắn kiểu là SqlConnection nếu dùng UseSqlServer
 			if (dbConnection is not SqlConnection sqlConnection)
 			{
 				throw new InvalidOperationException("Database connection is not SqlConnection.");
@@ -86,7 +84,7 @@ namespace myAISapi.Data
 				result[table.TableName] = rows;
 			}
 
-			return result; // Trả về dictionary có thể serialize thành JSON
+			return result;
 		}
 
 		protected override void OnModelCreating(ModelBuilder modelBuilder)

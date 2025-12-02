@@ -62,7 +62,7 @@ namespace myAISapi.Encoder
 		private static int EncodeLon(double lonDeg)
 		{
 			if (double.IsNaN(lonDeg) || double.IsInfinity(lonDeg))
-				return 0; // hoặc set về special value nếu muốn
+				return 0; 
 
 			if (lonDeg > 180.0) lonDeg = 180.0;
 			if (lonDeg < -180.0) lonDeg = -180.0;
@@ -87,8 +87,7 @@ namespace myAISapi.Encoder
 			if (upper.Length > 20)
 				upper = upper.Substring(0, 20);
 
-			// pad phải đủ 20 ký tự (spec Name of AtoN = 20 chars)
-			upper = upper.PadRight(20, '@'); // '@' = 0 trong bảng 6-bit
+			upper = upper.PadRight(20, '@'); 
 
 			foreach (char c in upper)
 			{

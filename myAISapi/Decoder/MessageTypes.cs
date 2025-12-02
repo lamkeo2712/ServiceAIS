@@ -56,7 +56,7 @@ namespace myAISapi.Decoder
 					Longitude = (double)parseData(SubVipPro(payloadBit,79, 28), "I", 4)/60,
 					Latitude = (double)parseData(SubVipPro(payloadBit,107, 27), "I", 4)/60,
 					TypeOfEPFD = (int)parseData(SubVipPro(payloadBit,134, 4), "e"),
-					Spare = null, // Thay thế cho 'x'
+					Spare = null,
 					RAIMFlags = (bool)parseData(SubVipPro(payloadBit,148, 1), "b"),
 					SOTDMAstate = (int)parseData(SubVipPro(payloadBit,149, 19), "u")
 				};
@@ -94,7 +94,7 @@ namespace myAISapi.Decoder
 					Draught = (int)parseData(SubVipPro(payloadBit,294, 8), "U", 1),
 					Destination = (string)parseData(SubVipPro(payloadBit,302, 120), "t"),
 					DTE = (bool)parseData(SubVipPro(payloadBit,422, 1), "b"),
-					Spare = null // Thay thế cho 'x'
+					Spare = null
 				};
 				return dataDecode;
 			}
@@ -168,7 +168,7 @@ namespace myAISapi.Decoder
 					RAIMFlags = (bool)parseData(SubVipPro(payloadBit,305, 1), "b"),
 					DTE = (bool)parseData(SubVipPro(payloadBit,306, 1), "b"),
 					AssignedModeFlag = (bool)parseData(SubVipPro(payloadBit,307, 1), "b"),
-					Spare = null // Thay thế cho 'x'
+					Spare = null
 				};
 				return dataDecode;
 			}
@@ -213,7 +213,7 @@ namespace myAISapi.Decoder
 
 					AssignedModeFlag = (bool)parseData(SubVipPro(payloadBit,270, 1), "b") ,
 
-					Spare = null, // Thay thế cho 'x'
+					Spare = null,
 
 					NameExtension = (string)parseData(SubVipPro(payloadBit,272, 89), "t")
 				};
@@ -270,7 +270,7 @@ namespace myAISapi.Decoder
 					MMSI = (int)parseData(SubVipPro(payloadBit,8, 30), "u"),
 					PartNumber = (int)parseData(SubVipPro(payloadBit,38, 2), "u"),
 					VesselName = (string)parseData(SubVipPro(payloadBit,40, 120), "t"),
-					Spare = "Not using", // Thay thế cho 'x',
+					Spare = "Not using",
 				};
 
 				DecodedAISMessage dataDecodeB = new DecodedAISMessage
@@ -289,7 +289,7 @@ namespace myAISapi.Decoder
 					DimensionToPort = (int)parseData(SubVipPro(payloadBit, 150, 6), "u"),
 					DimensionToStar = (int)parseData(SubVipPro(payloadBit, 156, 6), "u"),
 					MotherShipMMSI = (int)parseData(SubVipPro(payloadBit,132, 30), "u"),
-					Spare = null, // Thay thế cho 'x',
+					Spare = null,
 				};
 
 				if (PartNumber == 0)

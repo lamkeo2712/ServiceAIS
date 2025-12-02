@@ -4,10 +4,8 @@
 
 namespace myAISapi.Migrations
 {
-    /// <inheritdoc />
     public partial class AddUsersTable : Migration
     {
-        /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
@@ -29,7 +27,6 @@ namespace myAISapi.Migrations
                 });
         }
 
-        /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(

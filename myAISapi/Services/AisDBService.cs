@@ -37,7 +37,6 @@ namespace myAISapi.Services
 			_cassandraHanhTrinhRepo = cassandraHanhTrinhRepo;
 		}
 
-		// Thực hiện xử lý chạy nền tại đây
 		protected override async Task ExecuteAsync(CancellationToken stoppingToken)
 		{
 			_logger.LogInformation("AIS Decoder Hosted Service is running.");
@@ -80,7 +79,7 @@ namespace myAISapi.Services
 								await transaction.CommitAsync();
 								//Console.WriteLine($"Batch: {JsonSerializer.Serialize(batch)}");
 								//Console.WriteLine("Du lieu tau đa đuoc luu vao database.");
-								_shipStore.DeleteMessages(batch); // Xóa batch đã xử lý
+								_shipStore.DeleteMessages(batch);
 							}
 							catch
 							{
@@ -104,19 +103,15 @@ namespace myAISapi.Services
 		{
 			var mmsiList = ships.Select(s => s.MMSI).ToList();
 
-			// Lấy danh sách MMSI đã tồn tại
 			var existingMmsis = await context.DM_Tau
 				.Where(t => mmsiList.Contains(t.MMSI))
 				.Select(t => t.MMSI)
 				.ToListAsync();
 
 
-
-			// Phân loại insert/update
 			var toInsert = ships.Where(s => !existingMmsis.Contains(s.MMSI)).ToList();
 			var toUpdate = ships.Where(s => existingMmsis.Contains(s.MMSI)).ToList();
 
-			// Bulk Insert
 			if (toInsert.Any())
 			{
 				ships.ForEach(s =>
@@ -131,7 +126,6 @@ namespace myAISapi.Services
 				});
 			}
 
-			// Bulk Update
 			if (toUpdate.Any())
 			{
 				var existingShips = await context.DM_Tau
@@ -253,8 +247,7 @@ namespace myAISapi.Services
 
 								//Console.WriteLine($"Batch: {JsonSerializer.Serialize(batch)}");
 								//Console.WriteLine("Du lieu hanh trinh đa đuoc luu vao database.");
-								_routeStore.DeleteMessages(batch); // Xóa batch đã xử lý
-
+								_routeStore.DeleteMessages(batch);
 							}
 							catch
 							{
@@ -275,7 +268,6 @@ namespace myAISapi.Services
 		{
 			if (!routes.Any())
 				return;
-			// Lấy danh sách MMSI đã tồn tại trong DM_Tau
 			
 
 			var mmsiList = routes

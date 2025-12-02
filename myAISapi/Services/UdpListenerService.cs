@@ -32,29 +32,46 @@ namespace myAISapi.Services
 		protected override async Task ExecuteAsync(CancellationToken stoppingToken)
 		{
 			_logger.LogInformation($"✅ UDP Listener started on port {UdpPort}.");
-			// Ping
-			byte[] msg = Encoding.ASCII.GetBytes("a");
-			await _udpClient.SendAsync(msg, msg.Length);
 
-			Task.Run(async () =>
+			// Gửi ping lần đầu
+			byte[] pingMsg = Encoding.ASCII.GetBytes("a");
+			await _udpClient.SendAsync(pingMsg, pingMsg.Length);
+
+			while (!stoppingToken.IsCancellationRequested)
 			{
-				while (!stoppingToken.IsCancellationRequested)
+				try
 				{
-					try
+					var receiveTask = _udpClient.ReceiveAsync();
+					var timeoutTask = Task.Delay(TimeSpan.FromSeconds(10), stoppingToken);
+
+					var completed = await Task.WhenAny(receiveTask, timeoutTask);
+
+					if (completed == receiveTask)
 					{
-						var result = await _udpClient.ReceiveAsync();
+						var result = receiveTask.Result;
 						string message = Encoding.UTF8.GetString(result.Buffer);
 
 						_messageQueue.Add(message, stoppingToken);
-						//Console.WriteLine($"AllRoute: {JsonSerializer.Serialize(_messageQueue)}");
 					}
-					catch (Exception ex)
+					else
 					{
-						_logger.LogError($"❌ Error receiving UDP data: {ex.Message}");
-						continue;
+						if (stoppingToken.IsCancellationRequested)
+							break;
+
+						_logger.LogWarning("⏳ No UDP data received within timeout. Sending ping...");
+						await _udpClient.SendAsync(pingMsg, pingMsg.Length);
 					}
 				}
-			}, stoppingToken);
+				catch (OperationCanceledException)
+				{
+					break;
+				}
+				catch (Exception ex)
+				{
+					_logger.LogError(ex, "❌ Error receiving UDP data.");
+					await Task.Delay(1000, stoppingToken);
+				}
+			}
 
 			_logger.LogInformation("❎ UDP Listener stopped.");
 		}

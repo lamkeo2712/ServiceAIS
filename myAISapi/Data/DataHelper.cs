@@ -70,7 +70,7 @@ namespace myAISapi.Data
 					DateTime baseTime = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, DateTime.Now.Hour, DateTime.Now.Minute, 0);
 					if (message.SecondUTC > DateTime.Now.Second)
 					{
-						baseTime = baseTime.AddMinutes(-1); // Giảm phút xuống một đơn vị
+						baseTime = baseTime.AddMinutes(-1);
 					}
 
 					dtUTC = baseTime.AddSeconds(message.SecondUTC ?? 0);

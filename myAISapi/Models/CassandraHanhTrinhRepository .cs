@@ -70,25 +70,20 @@ public class CassandraHanhTrinhRepository : ICassandraHanhTrinhRepository
 
 	public async Task InsertBatchAsync(IEnumerable<DM_HanhTrinh> routes, CancellationToken ct = default)
 	{
-		// Lưu ý: Cassandra không khuyến khích LOGGED BATCH to đùng;
-		// ở đây mình insert tuần tự, sau này tối ưu tiếp (group theo (MMSI, day) để dùng UNLOGGED BATCH).
 		var tasks = new List<Task>();
 
 		foreach (var r in routes)
 		{
 			if (!r.DateTimeUTC.HasValue)
-				continue; // không có DateTimeUTC thì không partition được
+				continue;
 
 			var dtUtc = DateTime.SpecifyKind(r.DateTimeUTC.Value, DateTimeKind.Utc);
 			var day = new LocalDate(dtUtc.Year, dtUtc.Month, dtUtc.Day);
 
-			// tạm auto MaHanhTrinh nếu = 0
 			var maHanhTrinh = r.MaHanhTrinh != 0
 				? r.MaHanhTrinh
 				: (int)(dtUtc.Ticks % int.MaxValue);
 
-			// Nếu bạn có MessageType trong DecodedAISMessage thì bổ sung vào DM_HanhTrinh,
-			// còn hiện tại tạm để 0.
 			int messageType = 0;
 
 			var bound = _insertStmt.Bind(
@@ -103,7 +98,7 @@ public class CassandraHanhTrinhRepository : ICassandraHanhTrinhRepository
 				r.Latitude.HasValue ? (float?)r.Latitude.Value : null,
 				r.CourseOverGround.HasValue ? (float?)r.CourseOverGround.Value : null,
 				r.TrueHeading,
-				/* TimeStamp */ null, // nếu bạn có trường này trong DM_HanhTrinh thì map vào
+				null,
 				r.ManeuverIndicator,
 				r.RAIMFlags,
 				r.PositionFixType,
@@ -133,7 +128,6 @@ public class CassandraHanhTrinhRepository : ICassandraHanhTrinhRepository
 
 		var result = new List<DM_HanhTrinh>();
 
-		// Lặp qua từng ngày trong khoảng [startUtc, nowUtc]
 		var currentDate = startUtc.Date;
 		var lastDate = nowUtc.Date;
 
@@ -142,10 +136,8 @@ public class CassandraHanhTrinhRepository : ICassandraHanhTrinhRepository
 			if (ct.IsCancellationRequested)
 				break;
 
-			// LocalDate cho partition key "day"
 			var localDate = new LocalDate(currentDate.Year, currentDate.Month, currentDate.Day);
 
-			// Query TẤT CẢ record của ngày đó cho MMSI (không filter DateTimeUTC ở CQL nữa)
 			var bound = _selectByMmsiDayStmt.Bind(mmsi, localDate);
 			var rs = await _session.ExecuteAsync(bound).ConfigureAwait(false);
 
@@ -153,21 +145,18 @@ public class CassandraHanhTrinhRepository : ICassandraHanhTrinhRepository
 			{
 				var ht = MappingHanhTrinh(row);
 
-				// Đảm bảo DateTimeUTC được coi là UTC
 				if (ht.DateTimeUTC.HasValue)
 				{
 					var dtUtc = DateTime.SpecifyKind(ht.DateTimeUTC.Value, DateTimeKind.Utc);
 
-					// Lọc theo khoảng giờ [startUtc, nowUtc]
 					if (dtUtc < startUtc || dtUtc > nowUtc)
 						continue;
 
-					// Lọc rác: lat/lon null hoặc = 0
 					if (!ht.Latitude.HasValue || ht.Latitude.Value == 0 ||
 						!ht.Longitude.HasValue || ht.Longitude.Value == 0)
 						continue;
 
-					ht.DateTimeUTC = dtUtc; // gán lại cho chắc
+					ht.DateTimeUTC = dtUtc;
 
 					result.Add(ht);
 				}
@@ -176,7 +165,6 @@ public class CassandraHanhTrinhRepository : ICassandraHanhTrinhRepository
 			currentDate = currentDate.AddDays(1);
 		}
 
-		// Sắp xếp tăng dần giống proc SQL cũ
 		return result
 			.OrderBy(r => r.DateTimeUTC ?? DateTime.MinValue)
 			.ToList();

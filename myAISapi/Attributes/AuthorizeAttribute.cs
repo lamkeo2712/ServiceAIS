@@ -29,14 +29,12 @@ namespace myAISapi.Attributes
 
 			public void OnAuthorization(AuthorizationFilterContext context)
 			{
-				// Kiểm tra xem người dùng đã đăng nhập hay chưa
 				if (!context.HttpContext.User.Identity.IsAuthenticated)
 				{
-					context.Result = new UnauthorizedResult(); // Hoặc ForbidResult
+					context.Result = new UnauthorizedResult();
 					return;
 				}
 
-				// Kiểm tra role
 				if (!CanAccessToAction(context.HttpContext))
 				{
 					context.Result = new ForbidResult();
@@ -45,11 +43,9 @@ namespace myAISapi.Attributes
 
 			private bool CanAccessToAction(HttpContext httpContext)
 			{
-				// Lấy danh sách các role từ claim "role"
 				var roles = httpContext.User.Claims.Where(c => c.Type == ClaimTypes.Role)
 									  .Select(c => c.Value);
 
-				// Kiểm tra xem role của người dùng có nằm trong danh sách các role được phép hay không
 				return roles.Contains(RoleName);
 			}
 		}

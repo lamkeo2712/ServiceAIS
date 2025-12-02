@@ -26,7 +26,7 @@ builder.Services.AddSingleton<Cassandra.ISession>(sp =>
 	var settings = sp.GetRequiredService<IOptions<CassandraSettings>>().Value;
 
 	var clusterBuilder = Cluster.Builder()
-		.AddContactPoints(settings.ContactPoints) // ví dụ: ["127.0.0.1"]
+		.AddContactPoints(settings.ContactPoints)
 		.WithPort(settings.Port);
 
 	if (!string.IsNullOrEmpty(settings.Username))
@@ -41,7 +41,6 @@ builder.Services.AddSingleton<Cassandra.ISession>(sp =>
 builder.Services.AddSingleton<ICassandraHanhTrinhRepository, CassandraHanhTrinhRepository>();
 
 
-// Add services to the container.
 
 // Au then ti cây sừn
 var PublicKeyPath = builder.Configuration["Jwt:PublicKeyPath"];
@@ -60,9 +59,9 @@ builder.Services.AddAuthentication(options =>
 	options.TokenValidationParameters = new TokenValidationParameters
 	{
 		ValidateIssuer = true,
-		ValidIssuer = builder.Configuration["Jwt:Issuer"], // Thay bằng issuer của bạn
+		ValidIssuer = builder.Configuration["Jwt:Issuer"],
 		ValidateAudience = true,
-		ValidAudience = builder.Configuration["Jwt:Audience"], // Thay bằng audience của bạn
+		ValidAudience = builder.Configuration["Jwt:Audience"],
 		ValidateIssuerSigningKey = true,
 		IssuerSigningKey = new RsaSecurityKey(rsa),
 		ValidateLifetime = true,
@@ -86,7 +85,7 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 	options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
 	options.JsonSerializerOptions.DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.Never;
 	//options.JsonSerializerOptions.Converters.Add(new NullConverter<object>());
-	options.JsonSerializerOptions.WriteIndented = true; // Giúp JSON dễ đọc
+	options.JsonSerializerOptions.WriteIndented = true;
 });
 
 builder.Services.AddSignalR();
@@ -110,20 +109,7 @@ builder.Services.AddHostedService<AisDecoderHostedService>();
 builder.Services.AddHostedService<AisDBService>();
 builder.Services.AddHostedService<BeaconDriftHostedService>();
 
-//builder.Services.AddCors(options =>
-//{
-//	options.AddPolicy("AllowFrontend", policy =>
-//	{
-//		policy
-//			.WithOrigins(
-//				"http://localhost:5173",
-//				"http://localhost:3030"
-//			)
-//			.AllowAnyHeader()
-//			.AllowAnyMethod()
-//			.AllowCredentials(); // ⚠️ cần cho SignalR + cookie/token
-//	});
-//});
+
 
 builder.Services.AddCors(options =>
 {
@@ -153,7 +139,6 @@ builder.Services.AddSwaggerGen(c =>
 		BearerFormat = "JWT"
 	});
 
-	// Thêm security requirement cho các endpoint yêu cầu xác thực
 	c.AddSecurityRequirement(new OpenApiSecurityRequirement
 	{
 		{
@@ -174,7 +159,6 @@ builder.Services.AddSwaggerGen(c =>
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();

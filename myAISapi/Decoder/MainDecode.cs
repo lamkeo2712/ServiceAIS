@@ -10,12 +10,9 @@ namespace myAISapi.Decoder
 {
     public class MainDecode
     {
-        // Các phương thức và logic giải mã AIS sẽ được đặt ở đây
         public static object AisDecode(string message)
         {
-            // Loại bỏ ký tự xuống dòng và khoảng trắng thừa
             message = message.Trim().Replace("\r", "");
-            //Console.WriteLine($"\n\n\nOriginal message: {message}");
 
             var aisMessageMatch = Regex.Match(message, @"(!AIVDM.+)$");
             if (aisMessageMatch.Success)
@@ -23,42 +20,31 @@ namespace myAISapi.Decoder
                 message = aisMessageMatch.Value;
             }
 
-            // Kiểm tra định dạng thông điệp AIS
             if (!message.StartsWith("!AIVDM"))
             {
-                //throw new ArgumentException("Invalid AIS message format");
-                //throw new ArgumentException( "Invalid AIS message format");
                 return "a";
             }
 
             var fields = message.Split(',');
-            //Console.WriteLine($"Length of fields: {fields.Length}");
 
-            // Kiểm tra số lượng trường
             if (fields.Length < 7)
             {
-				//throw new ArgumentException("Incomplete AIS message");
 				return "a";
 			}
 
-            // Kiểm tra checksum
             if (!IsChecksumValid(message))
             {
-				//throw new ArgumentException($"Checksum invalid: {message}");
 				return "a";
 			}
 
-            // Giải mã payload
             var messageCount = fields[1];
             var fragNumber = fields[2];
             var messageID = fields[3];
             var channel = fields[4];
             var payload = fields[5];
 
-            // Nếu payload bị cắt ngắn, trả về thông báo lỗi
             if (payload.Length < 10)
             {
-				//throw new ArgumentException($"Truncated payload: {message}");
 				return "a";
             } 
 
@@ -88,7 +74,6 @@ namespace myAISapi.Decoder
 
             int messageType = (int)parseData(payloadBit.Substring(0, 6), "u");
 
-            // Giải mã theo từng loại tin nhắn
             switch (messageType)
             {
                 case 1:
@@ -140,14 +125,12 @@ namespace myAISapi.Decoder
         {
             int checksum = 0;
 
-            // Bỏ qua ký tự đầu tiên ($ hoặc !)
             for (int i = 1; i < sentence.Length; i++)
             {
-                if (sentence[i] == '*') break; // Dừng khi gặp dấu '*'
+                if (sentence[i] == '*') break;
                 checksum ^= sentence[i];
             }
 
-            // Chuyển checksum sang dạng hex (2 chữ số)
             return checksum.ToString("X2");
         }
     }
